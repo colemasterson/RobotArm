@@ -31,4 +31,3 @@ class PhotoWidget(QWidget):
 
         # Center align the content horizontally within the widget
         layout.setAlignment(Qt.AlignHCenter)
-

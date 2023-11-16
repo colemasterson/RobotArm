@@ -7,8 +7,8 @@ from PyQt5.QtCore import QTimer
 import pyqtgraph.opengl as gl
 
 # External files needed:
-from ui_frame import QtMain  # PyQt framework
-from Robot import Robot # OpenGL Robot object
+from model.robot_simulation.ui_frame import QtMain  # PyQt framework
+from model.robot_simulation.Robot import Robot # OpenGL Robot object
 
 """
 Simulation of a 6 DOF robot.
@@ -177,9 +177,9 @@ if __name__ == "__main__":
         np.set_printoptions(precision=1, suppress=True)
         # Add 3d renderer and label to framework
         view_3d = RenderWindow(main_win)
-        label = QtLabel(view_3d)
+        # label = QtLabel(view_3d)
         main_win.hbox.addWidget(view_3d, 3)
-        main_win.hbox.addWidget(label, 1)
+        # main_win.hbox.addWidget(label, 1)
         # Add popup window to framework
         main_win.pop = QtSliders(view_3d)
         sys.exit(main_win.app.exec_())

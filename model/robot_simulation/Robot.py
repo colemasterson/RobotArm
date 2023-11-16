@@ -1,4 +1,4 @@
-import rm_utilities as Rm
+import model.robot_simulation.rm_utilities as Rm
 import numpy as np
 import pyqtgraph.opengl as gl
 

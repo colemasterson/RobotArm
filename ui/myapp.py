@@ -1,11 +1,13 @@
 import sys
 import os
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTabWidget, QHBoxLayout, QLabel
-from ServosTabContent import ServosTabContent
-from MacrosTabContent import MacrosTabContent
-from DiagnosticsTabContent import DiagnosticsTabContent
-from BottomWidget import BottomWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTabWidget, QHBoxLayout, QLabel, QStyleFactory
+from ui.ServosTabContent import ServosTabContent
+from ui.MacrosTabContent import MacrosTabContent
+from ui.DiagnosticsTabContent import DiagnosticsTabContent
+from ui.BottomWidget import BottomWidget
+
+
 
 class MyApp(QWidget):
     def __init__(self):
@@ -56,6 +58,7 @@ class MyApp(QWidget):
         self.setLayout(main_layout)
         self.setWindowTitle('Robot Arm Control')
         self.show()
+        # self.showFullScreen()
 
     def updateTopLeft(self, index):
         # Clear the existing content in the top-left section
@@ -74,6 +77,7 @@ class MyApp(QWidget):
 
 def main():
     app = QApplication(sys.argv)
+    QApplication.setStyle(QStyleFactory.create('Fusion')) 
     my_app = MyApp()
     sys.exit(app.exec_())
 
