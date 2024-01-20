@@ -7,8 +7,6 @@ from ui.MacrosTabContent import MacrosTabContent
 from ui.DiagnosticsTabContent import DiagnosticsTabContent
 from ui.BottomWidget import BottomWidget
 
-
-
 class MyApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -16,6 +14,7 @@ class MyApp(QWidget):
         self.initUI()
 
     def initUI(self):
+        # Set the screen geometry and window title
         screen_geometry = self.screen().geometry()
         self.setGeometry(0, 0, screen_geometry.width(), screen_geometry.height())
         self.setWindowTitle('Robot Arm Control')
@@ -28,56 +27,36 @@ class MyApp(QWidget):
         macro_tab = MacrosTabContent()
         diagnostics_tab = DiagnosticsTabContent()
 
+        # Add tabs for different pages of the application
         self.tab_widget.addTab(servos_tab, 'Servos Control')
         self.tab_widget.addTab(macro_tab, 'Macro Control')
         self.tab_widget.addTab(diagnostics_tab, 'Diagnostics')
-
-        # Specify the file names and names for each photo
-
-        # Create widgets for the top-left and top-right sections
-        self.top_left_widget = QWidget(self)
-        self.top_left_layout = QVBoxLayout(self.top_left_widget)
-
-        self.top_right_widget = QWidget(self)
-        self.top_right_layout = QVBoxLayout(self.top_right_widget)
-
-        # Create bottom widget
-        bottom_widget = BottomWidget()
-
-        # Connect the tabChanged signal to a custom slot
-        self.tab_widget.currentChanged.connect(self.updateTopLeft)
+        
+        # Set styling for labels for the application
+        style = """
+            QLabel {
+                padding: 0;
+                margin: 0;
+                font-family: Arial, sans-serif; /* Change the font family */
+                font-size: 16px; /* Change the font size */
+                font-weight: bold; /* Change the font weight */
+            }
+        """
+        self.setStyleSheet(style)
 
         # Create a layout for the main window
-        main_layout = QVBoxLayout(self)
+        main_layout = QVBoxLayout()
 
+        # Add widgets to the main layout
         main_layout.addWidget(self.tab_widget)
-        main_layout.addWidget(self.top_left_widget)
-        main_layout.addWidget(self.top_right_widget)
-        main_layout.addWidget(bottom_widget)
 
+        # Display the application
         self.setLayout(main_layout)
         self.setWindowTitle('Robot Arm Control')
         self.show()
-        # self.showFullScreen()
-
-    def updateTopLeft(self, index):
-        # Clear the existing content in the top-left section
-        self.top_left_layout.removeWidget(self.top_left_widget)
-        self.top_left_widget.deleteLater()
-
-        
-        self.top_left_widget = QWidget(self)
-        self.top_left_layout = QVBoxLayout(self.top_left_widget)
-        #self.top_left_layout.addWidget(current_tab.getLeftContent())
-
-        # Add the new widget to the layout
-        #self.top_left_layout.addWidget(self.top_left_widget)
-
-        self.update()
 
 def main():
     app = QApplication(sys.argv)
-    QApplication.setStyle(QStyleFactory.create('Fusion')) 
     my_app = MyApp()
     sys.exit(app.exec_())
 

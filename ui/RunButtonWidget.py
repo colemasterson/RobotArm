@@ -40,10 +40,6 @@ class RunButtonWidget(QWidget):
 
         # Set the size and title of the main widget
         self.setGeometry(300, 300, 300, 200)
-        self.setWindowTitle('Run Button Example')
-
-        # Show the widget
-        self.show()
 
     def run_function(self):
         hello_world()

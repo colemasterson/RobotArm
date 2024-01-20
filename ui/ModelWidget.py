@@ -3,12 +3,14 @@ import numpy as np
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QSlider, QLabel
 from PyQt5 import QtGui
 from PyQt5.QtCore import QTimer
+from PyQt5 import QtCore
+
 import pyqtgraph.opengl as gl
 
 from model.robot_simulation.start_robot import QtMain, RenderWindow, QtSliders
 
 class ModelWidget(QWidget):
-    def __init__(self, model_name):
+    def __init__(self, ):
         super(ModelWidget, self).__init__()
 
         # Create framework
@@ -25,14 +27,7 @@ class ModelWidget(QWidget):
         # Add QtMain instance as a widget to this main application
         self.layout = QVBoxLayout(self)
         self.layout.addWidget(self.main_win)
-        
-        model_label = QLabel(self)
-        name_label = QLabel(model_name, self)
-        
-        self.layout.addWidget(model_label)
 
         self.setGeometry(100, 100, 500, 400)
         self.setWindowTitle('Main Application')
         self.show()
-
-    # ... (rest of the code)
