@@ -6,6 +6,8 @@ from ui.ServosTabContent import ServosTabContent
 from ui.MacrosTabContent import MacrosTabContent
 from ui.DiagnosticsTabContent import DiagnosticsTabContent
 from ui.BottomWidget import BottomWidget
+from arm_control.interfaces.arm_interface import ArmInterface
+
 
 class MyApp(QWidget):
     def __init__(self):
@@ -21,9 +23,10 @@ class MyApp(QWidget):
 
         # Create a tab widget
         self.tab_widget = QTabWidget(self)
+        arm_interface = ArmInterface()
 
         # Create tabs and add them to the tab widget
-        servos_tab = ServosTabContent()
+        servos_tab = ServosTabContent(arm_interface)
         macro_tab = MacrosTabContent()
         diagnostics_tab = DiagnosticsTabContent()
 

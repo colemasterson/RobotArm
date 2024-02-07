@@ -5,15 +5,14 @@ from ui.RunButtonWidget import RunButtonWidget
 from ui.BottomWidget import BottomWidget
 from PyQt5.QtCore import Qt
 from ui.TextListWidget import TextListWidget
+from ui.ServosControlWidget import ServosControlWidget  # Make sure this path is correct
 
 class ServosTabContent(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, arm_interface):
+            super().__init__()
+            self.initUI(arm_interface)
 
-        self.initUI()
-
-    def initUI(self):
-                
+    def initUI(self, arm_interface):
         layout = QVBoxLayout(self)
         
         # Add the top widget to contain the top-left and top-right widgets
@@ -21,8 +20,9 @@ class ServosTabContent(QWidget):
         top_layout = QHBoxLayout()
         
         control_layout = QVBoxLayout()
-        run_button = RunButtonWidget()
-        control_layout.addWidget(run_button)
+        servo_control_widget = ServosControlWidget(arm_interface)
+        #layout.addWidget(servo_control_widget)
+        control_layout.addWidget(servo_control_widget)
         top_layout.addLayout(control_layout)
         
         right_layout = QVBoxLayout()
