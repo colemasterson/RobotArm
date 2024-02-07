@@ -2,7 +2,7 @@ import xarm;
 
 # interfaces/arm_interface.py
 
-from controllers.servo_controller import ServoController
+from ..controllers.servo_controller import ServoController
 
 class ArmInterface:
     def __init__(self, connection_type='USB'):
