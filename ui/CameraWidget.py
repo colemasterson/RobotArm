@@ -8,7 +8,8 @@ class CameraWidget(QWidget):
     def __init__(self, widget_name, parent=None):
         super(CameraWidget, self).__init__(parent)
 
-        self.video_capture = cv2.VideoCapture(0)  # Open the default camera (you can change the index if you have multiple cameras)
+        # self.video_capture = cv2.VideoCapture(0)  # Open the default camera (you can change the index if you have multiple cameras)
+        self.video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # Open the default camera (you can change the index if you have multiple cameras)
 
         self.image_label = QLabel(self)
 
