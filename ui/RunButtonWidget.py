@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
 from PyQt5.QtGui import QColor
 from PyQt5.QtCore import Qt  # Add this line to import Qt
 
-from arm_control.hello_world import hello_world
+# from arm_control.hello_world import hello_world
 
 class RunButtonWidget(QWidget):
     def __init__(self):
@@ -41,8 +41,8 @@ class RunButtonWidget(QWidget):
         # Set the size and title of the main widget
         self.setGeometry(300, 300, 300, 200)
 
-    def run_function(self):
-        hello_world()
+    # def run_function(self):
+        # hello_world()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
