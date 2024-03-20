@@ -50,6 +50,7 @@ class OpenGLWidget(QOpenGLWidget):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update)
         self.timer.start(10)  # update at fps of 100
+        self.rotation_angle = 0
 
 
     def initializeGL(self):
@@ -60,23 +61,24 @@ class OpenGLWidget(QOpenGLWidget):
 
     def paintGL(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glPushMatrix()
+        glRotatef(self.rotation_angle, 0, 0, 1)
         draw_rectangle()
         draw_cylinder(0, 5, -55, (0.5, 1.0, 0.5), 0, (0, 1, 0))
         draw_cylinder(0, 5, -47, (0.5, 0.5, 1.0), 0, (0, 1, 0))
         draw_cylinder(0, 5, -39, (0, 0, 1.0), 0, (0, 1, 0))
         draw_claw(-0.5, 5, -31, (1.0, 1.0, 0), -45, (0, 1, 0))
         draw_claw(0.5, 5, -31, (1.0, 1.0, 0), 45, (0, 1, 0))
+        glPopMatrix()
 
     def resizeGL(self, w, h):
         glViewport(0, 0, w, h)
         
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Left:
-            print("test1")
-            glRotatef(-20, 0, 0, 1)
+            self.rotation_angle += -20
         elif event.key() == Qt.Key_Right:
-            print("test2")
-            glRotatef(20, 0, 0, 1)
+            self.rotation_angle += 20
         self.update()
 
 class MainWindow(QMainWindow):
