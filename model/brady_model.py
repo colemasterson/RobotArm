@@ -5,26 +5,6 @@ from OpenGL.GLU import *
 
 yaw, pitch = 0, 0
 initial_zoom = -55
-last_mouse_position = None
-
-def handle_mouse_dragging(event):
-    global last_mouse_position, yaw, pitch
-
-    if last_mouse_position is not None:
-        dx, dy = event.pos[0] - last_mouse_position[0], event.pos[1] - last_mouse_position[1]
-        yaw += dx * 0.1
-        pitch += dy * 0.1
-
-        # Limit the pitch to avoid flipping the view
-        pitch = max(-90, min(90, pitch))
-
-        glLoadIdentity()
-        gluPerspective(45, (800 / 600), 0.1, 60.0)
-        glTranslatef(0.0, 40, initial_zoom)  # Maintain the initial zoom level
-        glRotatef(-pitch, 1, 0, 0)
-        glRotatef(-yaw, 0, 1, 0)
-
-    last_mouse_position = event.pos
 
 def draw_cylinder(x, y, z, color, rotation_angle, rotation_axis):
     quadric = gluNewQuadric()
@@ -54,10 +34,10 @@ def draw_rectangle():
     glPushMatrix()
     glColor3f(1.0, 0.5, 0.5)
     glBegin(GL_QUADS)
-    glVertex3f(-4, -5, initial_zoom)
-    glVertex3f(4, -5, initial_zoom)
-    glVertex3f(4, 5, initial_zoom)
-    glVertex3f(-4, 5, initial_zoom)
+    glVertex3f(-4, 0, initial_zoom)
+    glVertex3f(4, 0, initial_zoom)
+    glVertex3f(4, 10, initial_zoom)
+    glVertex3f(-4, 10, initial_zoom)
     glEnd()
     glPopMatrix()
 
@@ -85,15 +65,11 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    last_mouse_position = event.pos
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    last_mouse_position = None
-            elif event.type == pygame.MOUSEMOTION:
-                if last_mouse_position is not None:
-                    handle_mouse_dragging(event)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    glRotatef(-20, 0, 0, 1)
+                elif event.key == pygame.K_RIGHT:
+                    glRotatef(20, 0, 0, 1)                  
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glEnable(GL_DEPTH_TEST)

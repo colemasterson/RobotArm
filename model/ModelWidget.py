@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
-from model.OpenGLWidget import OpenGLWidget  # Make sure this is accessible
+from model.brady_widget import OpenGLWidget  # Make sure this is accessible
 
 class ModelWidget(QMainWindow):
     def __init__(self):
