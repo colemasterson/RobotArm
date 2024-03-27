@@ -7,8 +7,9 @@ from arm_control.controllers.macro_controller import RobotArmController
 class CreateMacroSequence(QWidget):
     def __init__(self):
         super().__init__()
-        self.robot_arm_controller = RobotArmController()
-        self.robot_arm_controller.define_macros()
+        # self.robot_arm_controller = RobotArmController()
+        # self.robot_arm_controller = RobotArmController()
+        # self.robot_arm_controller.define_macros()
         self.initUI()
         #robot controller and macros defined
         
@@ -83,11 +84,12 @@ class CreateMacroSequence(QWidget):
         print(f"Entered Name: {entered_name}")
     
     def on_runMacroSequence(self):
-        for macro_num in range(1, 6):
-            macro_combobox = self.macro_widgets[f'macro_line_edit_{macro_num}']
-            selected_macro = macro_combobox.currentText()
-            if selected_macro != 'None':
-                self.robot_arm_controller.execute_macro(selected_macro)
+        # for macro_num in range(1, 6):
+        #     macro_combobox = self.macro_widgets[f'macro_line_edit_{macro_num}']
+        #     selected_macro = macro_combobox.currentText()
+        #     if selected_macro != 'None':
+        #         self.robot_arm_controller.execute_macro(selected_macro)
+        print("")
 
 
 if __name__ == '__main__':
