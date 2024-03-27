@@ -1,12 +1,14 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel,  QComboBox, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton
 from PyQt5.QtCore import Qt
+from arm_control.controllers.macro_controller import RobotArmController
 
 
 class CreateMacroSequence(QWidget):
     def __init__(self):
         super().__init__()
-
+        self.robot_arm_controller = RobotArmController()
+        self.robot_arm_controller.define_macros()
         self.initUI()
 
     def initUI(self):
@@ -80,10 +82,12 @@ class CreateMacroSequence(QWidget):
         print(f"Entered Name: {entered_name}")
     
     def on_runMacroSequence(self):
-        #Todo Call Actual Run Sequence
-        print(f"Run Sequence")
-        # print something out
-        # You can store the entered name in a variable or perform any other actions here
+        for macro_num in range(1, 6):
+            macro_combobox = self.macro_widgets[f'macro_line_edit_{macro_num}']
+            selected_macro = macro_combobox.currentText()
+            if selected_macro != 'None':
+                self.robot_arm_controller.execute_macro(selected_macro)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
