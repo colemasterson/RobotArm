@@ -26,7 +26,7 @@ class ServosControlWidget(QWidget):
             input_box.setValidator(QDoubleValidator(-125.0, 125.0, 2))  # Allows floating point within range
             
             # Set initial values for input boxes, with a special case for servo 3
-            initial_value = -90.0 if i == 2 else 0.0
+            initial_value = 0.0
             input_box.setText(f"{initial_value}")
             slider.setValue(int(initial_value * 4))
             
