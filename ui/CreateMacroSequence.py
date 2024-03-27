@@ -10,7 +10,8 @@ class CreateMacroSequence(QWidget):
         self.robot_arm_controller = RobotArmController()
         self.robot_arm_controller.define_macros()
         self.initUI()
-
+        #robot controller and macros defined
+        
     def initUI(self):
         # Create widgets
         self.macro_widgets = {}
