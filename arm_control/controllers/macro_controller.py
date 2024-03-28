@@ -7,7 +7,12 @@ class RobotArmController:
     def __init__(self):
         self.arm = xarm.Controller('USB')
         print('Battery voltage in volts:', self.arm.getBatteryVoltage())
-
+        self.servo_states = {1: {'position': None, 'speed': None},
+                             2: {'position': None, 'speed': None},
+                             3: {'position': None, 'speed': None},
+                             4: {'position': None, 'speed': None},
+                             5: {'position': None, 'speed': None},
+                             6: {'position': None, 'speed': None},}
         self.servo_controllers = {}
         for servo_id in range(1, 6):
             self.servo_controllers[servo_id] = ServoController(servo_id, self.arm)
@@ -39,7 +44,7 @@ class RobotArmController:
             print(f"Servo {servo_id} position is not initialized.")
             return
 
-        new_position = max(-90, min(90, current_position + delta))
+        new_position = max(-125.0, min(125.0, current_position + delta))
         servo_controller.set_position(new_position, wait=True)
         self.update_servo_state(servo_id, new_position)
 
@@ -48,7 +53,7 @@ class RobotArmController:
 
     def define_macros(self):
         self.macros = {
-            "default": [[1, 0.0], [2, 0.0], [3, -90.0], [4, 0.0], [5, 0.0], [6, 0.0]],
+            "default": [[1, 0.0], [2, 0.0], [3, 0.0], [4, 0.0], [5, 0.0], [6, 0.0]],
             "south_down": [[1, 0.0], [2, 0.0], [3, 0.0], [4, -75.0], [5, 10.0], [6, 0.0]],
             "south_west": [[1, 0.0], [2, 0.0], [3, -45.0], [4, -75.0], [5, 10.0], [6, -45.0]],
             "south_east": [[1, 0.0], [2, 0.0], [3, -45.0], [4, -75.0], [5, 10.0], [6, 45.0]],
