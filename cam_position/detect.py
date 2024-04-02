@@ -73,7 +73,7 @@ arucoDict = cv2.aruco.getPredefinedDictionary(ARUCO_DICT[aruco_type])
 arucoParams = cv2.aruco.DetectorParameters()
 detector = cv2.aruco.ArucoDetector(arucoDict, arucoParams)
 
-cap = cv2.VideoCapture(6)
+cap = cv2.VideoCapture(0)
 
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
