@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": [
-        "./arm_control"
+        "./arm_control",
+        "./pyopengl"
     ]
 }
