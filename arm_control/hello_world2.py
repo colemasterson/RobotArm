@@ -8,16 +8,19 @@ def test_robot_arm():
     # Define the macros
     arm_controller.define_macros()
 
-    """
+    
     # Test some macros
     print("Executing 'default' macro...")
-    arm_controller.execute_macro("default")
+    arm_controller.execute_macro("hook-out-y")
+    '''
     time.sleep(2)
-    """
+    arm_controller.execute_macro("south_down")
+    time.sleep(2)
+    arm_controller.execute_macro("south_west")    
    # arm_controller.arm.setPosition([[1, 0.0], [2, 0.0], [3, -90.0], [4, 0.0], [5, 0.0], [6, 0.0]], wait = True)
 
     print("Executing 'Rotate_Claw' macro...")
-   # arm_controller.execute_macro("rotate_claw")
+    arm_controller.execute_macro("rotate_claw")
     time.sleep(2)
   
     print("Executing 'open' macro...")
@@ -27,6 +30,6 @@ def test_robot_arm():
     print("Executing 'close' macro...")
     arm_controller.execute_macro("close")
     time.sleep(2)
-
+    '''
 if __name__ == "__main__":
     test_robot_arm()

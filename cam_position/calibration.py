@@ -29,7 +29,7 @@ objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 
 
-images = glob.glob('cameraCalibration/images/*.png')
+images = glob.glob('calis/camX/*.png')
 
 for image in images:
 
@@ -69,20 +69,20 @@ pickle.dump(dist, open( "dist.pkl", "wb" ))
 
 ############## UNDISTORTION #####################################################
 
-img = cv.imread('cali5.png')
+img = cv.imread('calis/camX/image0.png')
 h,  w = img.shape[:2]
 newCameraMatrix, roi = cv.getOptimalNewCameraMatrix(cameraMatrix, dist, (w,h), 1, (w,h))
 
 
 
-# Undistort
+'''# Undistort
 dst = cv.undistort(img, cameraMatrix, dist, None, newCameraMatrix)
 
 # crop the image
 x, y, w, h = roi
 dst = dst[y:y+h, x:x+w]
 cv.imwrite('caliResult1.png', dst)
-
+'''
 
 
 # Undistort with Remapping
