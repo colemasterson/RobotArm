@@ -34,7 +34,7 @@ class CreateMacroSequence(QWidget):
             self.macro_widgets[f'macro_line_edit_{macro_num}'] = macro_combobox
 
             macro_names = list(self.robot_arm_controller.macros.keys())  # Make sure this matches your actual controller reference
-            macro_names = "Test"
+            #macro_names = "Test"
             macro_combobox.addItems(['None'] + macro_names)
 
             servo_layout = QHBoxLayout()
