@@ -2,7 +2,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel
 import os
 # from ui.ModelWidget import ModelWidget
-from ui.TextListWidget import TextListWidget
+# from ui.TextListWidget import TextListWidget
+from ui.ServoDataWidget import ServoDataWidget
 from PyQt5.QtCore import Qt
 from model.ModelWidget import ModelWidget
 
@@ -14,9 +15,7 @@ class BottomWidget(QWidget):
 
     def initUI(self):
         
-        
-        current_state_text_list = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"]
-        current_state_info = TextListWidget(current_state_text_list)
+        current_state_info = ServoDataWidget()
         
         # current_model_widget = ModelWidget()
         current_model_widget = ModelWidget()
