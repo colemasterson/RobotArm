@@ -1,66 +1,52 @@
 import sys
-import os
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTabWidget, QHBoxLayout, QLabel, QStyleFactory
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTabWidget, QWidget
+from ui.CameraManager import CameraManager
 from ui.ServosTabContent import ServosTabContent
 from ui.MacrosTabContent import MacrosTabContent
 from ui.DiagnosticsTabContent import DiagnosticsTabContent
-from ui.BottomWidget import BottomWidget
+
 from arm_control.interfaces.arm_interface import ArmInterface
 
-
-class MyApp(QWidget):
+class MyApp(QMainWindow):  # Inherit from QMainWindow
     def __init__(self):
         super().__init__()
-
         self.initUI()
 
     def initUI(self):
-        # Set the screen geometry and window title
-        screen_geometry = self.screen().geometry()
-        self.setGeometry(0, 0, screen_geometry.width(), screen_geometry.height())
-        self.setWindowTitle('Robot Arm Control')
+        # Initialize CameraManager
+        self.camera_manager = CameraManager()
 
-        # Create a tab widget
-        self.tab_widget = QTabWidget(self)
-        arm_interface = ArmInterface()
+        # Create a central widget and layout for the QMainWindow
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        main_layout = QVBoxLayout(central_widget)
 
-        # Create tabs and add them to the tab widget
-        servos_tab = ServosTabContent(arm_interface)
-        macro_tab = MacrosTabContent()
-        diagnostics_tab = DiagnosticsTabContent()
+        # Create tabs
+        self.tab_widget = QTabWidget()
+        servos_tab = ServosTabContent(ArmInterface(), self.camera_manager)  # Assuming ArmInterface() is initialized correctly
+        macro_tab = MacrosTabContent(self.camera_manager)
+        diagnostics_tab = DiagnosticsTabContent(self.camera_manager)
 
-        # Add tabs for different pages of the application
+        # Add tabs
         self.tab_widget.addTab(servos_tab, 'Servos Control')
         self.tab_widget.addTab(macro_tab, 'Macro Control')
         self.tab_widget.addTab(diagnostics_tab, 'Diagnostics')
         
-        # Set styling for labels for the application
-        style = """
-            QLabel {
-                padding: 0;
-                margin: 0;
-                font-family: Arial, sans-serif; /* Change the font family */
-                font-size: 16px; /* Change the font size */
-                font-weight: bold; /* Change the font weight */
-            }
-        """
-        self.setStyleSheet(style)
-
-        # Create a layout for the main window
-        main_layout = QVBoxLayout()
-
-        # Add widgets to the main layout
+        # Add the tab widget to the main layout
         main_layout.addWidget(self.tab_widget)
 
-        # Display the application
-        self.setLayout(main_layout)
+        # Set the window title
         self.setWindowTitle('Robot Arm Control')
-        self.show()
+
+    def closeEvent(self, event):
+        # Clean up camera resources
+        self.camera_manager.release()
+        super(MyApp, self).closeEvent(event)  # Corrected super call
 
 def main():
     app = QApplication(sys.argv)
     my_app = MyApp()
+    my_app.show()  # It's often a good idea to call show on the window after construction
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
