@@ -2,7 +2,7 @@ import numpy as np
 
 x_camera_rotation = -90
 # Need to fix to an angle
-y_camera_rotation = 0
+y_camera_rotation = 180
 
 
 # Parameter x_or_y
@@ -82,14 +82,21 @@ def transformCameraCoordinates(camera_data, x_or_y):
     # def rotate_points(points, degrees, x_axis=0, y_axis=0, z_axis=0)
     positions = rotate_points(positions, rotation_needed, 1, 0, 0)
 
+    # if x_or_y == True:
+    #     # def rotate_points(points, degrees, x_axis=0, y_axis=0, z_axis=0)
+    #     positions = rotate_points(positions, rotation_needed, 1, 0, 0)
+    # else:
+    #     # def rotate_points(points, degrees, x_axis=0, y_axis=0, z_axis=0)
+    #     positions = rotate_points(positions, rotation_needed, 1, 0, 0)
+
     return positions
 
 
 
 if __name__ == '__main__':
     
-    # Sample data: XYZ coordinates of three points
-    test_data = np.array([
+    # Do on X camera points
+    x_data = np.array([
             [0.1561765, 0.08904364, 0.41930943],
             [0.15295053, 0.05556669, 0.41380159],
             [0.11283635, 0.02458074, 0.41529165]
@@ -98,6 +105,28 @@ if __name__ == '__main__':
     # Use the X-Axis
     p_x_or_y = True
     
-    transformed_points = transformCameraCoordinates(test_data, p_x_or_y)
+    transformed_points = transformCameraCoordinates(x_data, p_x_or_y)
     
-    print(transformed_points)
+    print("X-Camera Transformed Points\n", transformed_points)
+    
+    # Do on Y camera points
+    y_data = np.array([
+        [0.14846807, 0.0959883, 0.40869124],
+        [0.14351266, 0.06353426, 0.40816555],
+        [0.15223124, 0.01297262, 0.41260389]
+    ])
+    
+    # Use the Y-Axis
+    p_x_or_y = False
+    
+    transformed_points = transformCameraCoordinates(y_data, p_x_or_y)
+    
+    print("Y-Camera Transformed Points\n", transformed_points)
+
+#  (0., 0., 0.) 
+#  (0.03288238,  0.0034883, -0.21535375)  
+#  (0.02497109, -0.02596299, -0.55086326) 
+
+# ( 0.,         0.,          0.        )
+# (-0.03288238, 0.21535375,  0.0034883 )
+# ( 0.02497109, 0.55086326, -0.02596299)
