@@ -47,8 +47,6 @@ def getPositionData():
 
     # Create a NumPy array from the list of tuples
     camera_tvecs = np.array(list_of_tuples, dtype=object)
-    
-    print(camera_tvecs)
 
     return camera_tvecs, camera_rvecs
 
@@ -151,8 +149,8 @@ if __name__ == '__main__':
     
     transformed_points = transformCameraCoordinates(tvecs, p_x_or_y)
     
-    print("Transformed Points: \n", np.array(transformed_points))
-    print("Euler Angles: ", "\n", rvecs)
+    # print("Transformed Points: \n", np.array(transformed_points))
+    # print("Euler Angles: ", "\n", rvecs)
 
     
     # # Do on X camera points

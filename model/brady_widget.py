@@ -6,6 +6,7 @@ from PyQt5.QtCore import QTimer
 import numpy as np
 from OpenGL.GL import *
 from OpenGL.GLU import *
+from cam_position.normalization import getPositionData, transformCameraCoordinates
 # from positions need to get values some how.
 
 
@@ -15,14 +16,15 @@ yaw, pitch = 0, 0
 initial_zoom = -55
 
 
-# armPositionsData =[[ 0.,      0.,        0.        ],
-#  [-0.02083994,  0.03558095, -0.21626294],
-#  [-0.27997975,  0.02595508, -0.41643387]]
+update_armPositionsData =[[ 0.,      0.,        0.        ],
+  [-0.02083994,  0.03558095, -0.21626294],
+  [-0.27997975,  0.02595508, -0.41643387]]
 
+update_angles = [(0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (0.0, -90.0, 0.0)]
 
-firstSegmentTestEulerAngle = (0.0, 0.0, 0.0)
-secondSegmentTestEulerAngle = (0.0, 0.0, 0.0)
-thirdSegmentTestEulerAngle = (0.0, -90.0, 0.0)
+firstSegmentEulerAngle = (0.0, 0.0, 0.0)
+secondSegmentEulerAngle = (0.0, 0.0, 0.0)
+thirdSegmentEulerAngle = (0.0, 0.0, 0.0)
 
 
 class Position:
@@ -34,8 +36,8 @@ class Position:
 
 armPositionsData = [
     Position(0.0, 0.0, 0.0),
-    Position(-0.02083994, 0.03558095, -0.21626294),
-    Position(-0.27997975, 0.02595508, -0.41643387)
+    Position(0.0, 0.0, 0.0),
+    Position(0.0, 0.0, 0.0)
 ]
 
 
@@ -56,9 +58,9 @@ class ArmPositions:
 
 
     def addOffset(self):
-        offset_position1 = Position(self.position1.x, self.position1.y + 5, self.position1.z - 55)
-        offset_position2 = Position(self.position2.x, self.position2.y + 5, self.position2.z - 55)
-        offset_position3 = Position(self.position3.x, self.position3.y + 5, self.position3.z - 55)
+        offset_position1 = Position(self.position1.x, self.position1.y + 5, self.position1.z - 54)
+        offset_position2 = Position(self.position2.x, self.position2.y + 5, self.position2.z - 54)
+        offset_position3 = Position(self.position3.x, self.position3.y + 5, self.position3.z - 54)
         return ArmPositions([offset_position1, offset_position2, offset_position3])
 
 
@@ -71,6 +73,13 @@ class EulerAngles:
         self.z_degrees = z_degrees    
 
 
+def update_positions_and_angles(new_positions, new_angles):
+    global armPositionsData, firstSegmentEulerAngle, secondSegmentEulerAngle, thirdSegmentEulerAngle
+    armPositionsData = [Position(*pos) for pos in new_positions]
+
+    firstSegmentEulerAngle = new_angles[0]
+    secondSegmentEulerAngle = new_angles[1]
+    thirdSegmentEulerAngle = new_angles[2]
 
 
 # Define rotation matrices for x, y, and z axes
@@ -205,6 +214,92 @@ def draw_rectangle():
     glVertex3f(-4, 10, initial_zoom)
     glEnd()
     glPopMatrix()
+    
+# def draw_octagon():
+#     glPushMatrix()
+#     glColor3f(1.0, 0, 0)
+#     glBegin(GL_LINES)
+#     glVertex3f(-4, 0, initial_zoom)
+#     glVertex3f(4, 0, initial_zoom)
+
+#     glVertex3f(4, 0, initial_zoom)
+#     glVertex3f(4, 10, initial_zoom)
+
+#     glVertex3f(4, 10, initial_zoom)
+#     glVertex3f(-4, 10, initial_zoom)
+
+#     glVertex3f(-4, 10, initial_zoom)
+#     glVertex3f(-4, 0, initial_zoom)
+
+#     glVertex3f(-4, 0, initial_zoom)
+#     glVertex3f(-4, 0, initial_zoom + 1)
+
+#     glVertex3f(4, 0, initial_zoom)
+#     glVertex3f(4, 0, initial_zoom + 1)
+
+#     glVertex3f(4, 10, initial_zoom)
+#     glVertex3f(4, 10, initial_zoom + 1)
+
+#     glVertex3f(-4, 10, initial_zoom)
+#     glVertex3f(-4, 10, initial_zoom + 1)
+
+#     glVertex3f(-4, 0, initial_zoom + 1)
+#     glVertex3f(4, 0, initial_zoom + 1)
+
+#     glVertex3f(4, 0, initial_zoom + 1)
+#     glVertex3f(4, 10, initial_zoom + 1)
+
+#     glVertex3f(4, 10, initial_zoom + 1)
+#     glVertex3f(-4, 10, initial_zoom + 1)
+
+#     glVertex3f(-4, 10, initial_zoom + 1)
+#     glVertex3f(-4, 0, initial_zoom + 1)
+#     glEnd()
+#     glPopMatrix()
+
+def draw_octagon():
+    glPushMatrix()
+    glColor3f(1.0, 0, 0)
+    glBegin(GL_QUADS)
+    glVertex3f(-4, 0, initial_zoom)
+    glVertex3f(-2.828, 0, initial_zoom + 2.828)
+
+    glVertex3f(-2.828, 0, initial_zoom + 2.828)
+    glVertex3f(2.828, 0, initial_zoom + 2.828)
+
+    glVertex3f(2.828, 0, initial_zoom + 2.828)
+    glVertex3f(4, 0, initial_zoom)
+
+    glVertex3f(4, 0, initial_zoom)
+    glVertex3f(2.828, 0, initial_zoom - 2.828)
+
+    glVertex3f(2.828, 0, initial_zoom - 2.828)
+    glVertex3f(-2.828, 0, initial_zoom - 2.828)
+
+    glVertex3f(-2.828, 0, initial_zoom - 2.828)
+    glVertex3f(-4, 0, initial_zoom)
+
+    glVertex3f(-4, 0, initial_zoom)
+    glVertex3f(-2.828, 0, initial_zoom + 2.828)
+
+    glVertex3f(-2.828, 0, initial_zoom + 2.828)
+    glVertex3f(2.828, 0, initial_zoom + 2.828)
+
+    glVertex3f(2.828, 0, initial_zoom + 2.828)
+    glVertex3f(4, 0, initial_zoom)
+
+    glVertex3f(4, 0, initial_zoom)
+    glVertex3f(2.828, 0, initial_zoom - 2.828)
+
+    glVertex3f(2.828, 0, initial_zoom - 2.828)
+    glVertex3f(-2.828, 0, initial_zoom - 2.828)
+
+    glVertex3f(-2.828, 0, initial_zoom - 2.828)
+    glVertex3f(-4, 0, initial_zoom)
+    glEnd()
+    glPopMatrix()
+
+    
 
 
 class OpenGLWidget(QOpenGLWidget):
@@ -231,6 +326,17 @@ class OpenGLWidget(QOpenGLWidget):
         glPushMatrix()
         glRotatef(self.rotation_angle, 0, 0, 1)
         
+        tvecs, rvecs = getPositionData()
+        # Flag to tell if using x or y axis, x - true, y - false
+        p_x_or_y = True
+        transformed_points = transformCameraCoordinates(tvecs, p_x_or_y)
+        
+        update_positions_and_angles(transformed_points, rvecs)
+        
+        # print("First Segment Euler Angle:", firstSegmentEulerAngle)
+        # print("Second Segment Euler Angle:", secondSegmentEulerAngle)
+        # print("Third Segment Euler Angle:", thirdSegmentEulerAngle)
+        
         armPositions = ArmPositions(armPositionsData)
         armPositions = armPositions.scale(1, 1, -40)
         armPositions = armPositions.addOffset()
@@ -239,13 +345,13 @@ class OpenGLWidget(QOpenGLWidget):
         position2: Position = armPositions.position2
         position3: Position = armPositions.position3
         
-        firstEulerAngle = EulerAngles(*firstSegmentTestEulerAngle)
+        firstEulerAngle = EulerAngles(*firstSegmentEulerAngle)
         draw_cylinder(position1.x, position1.y, position1.z, (1.0, 0, 0), firstEulerAngle)
         
-        secondEulerAngle = EulerAngles(*secondSegmentTestEulerAngle)
+        secondEulerAngle = EulerAngles(*secondSegmentEulerAngle)
         draw_cylinder(position2.x, position2.y, position2.z, (0, 1.0, 0), secondEulerAngle)
         
-        thirdEulerAngle = EulerAngles(*thirdSegmentTestEulerAngle)
+        thirdEulerAngle = EulerAngles(*thirdSegmentEulerAngle)
         x,y,z = draw_cylinder_small(position3.x, position3.y, position3.z, (0, 0, 1.0), thirdEulerAngle)
         
         claw1_rotation = EulerAngles(thirdEulerAngle.x_degrees, 45 + thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees)
@@ -256,6 +362,7 @@ class OpenGLWidget(QOpenGLWidget):
 
 
         draw_rectangle()
+        #draw_octagon()
         glPopMatrix()
 
 
