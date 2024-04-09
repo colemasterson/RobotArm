@@ -1,40 +1,203 @@
+import math
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QOpenGLWidget
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
+import numpy as np
 from OpenGL.GL import *
 from OpenGL.GLU import *
+# from positions need to get values some how.
+
+
+
 
 yaw, pitch = 0, 0
 initial_zoom = -55
 
-def draw_cylinder(x, y, z, color, rotation_angle, rotation_axis):
+
+# armPositionsData =[[ 0.,      0.,        0.        ],
+#  [-0.02083994,  0.03558095, -0.21626294],
+#  [-0.27997975,  0.02595508, -0.41643387]]
+
+
+firstSegmentTestEulerAngle = (0.0, 0.0, 0.0)
+secondSegmentTestEulerAngle = (0.0, 0.0, 0.0)
+thirdSegmentTestEulerAngle = (0.0, -90.0, 0.0)
+
+
+class Position:
+    def __init__(self, x:float, y:float, z:float):
+        self.x:float = x
+        self.y:float = y
+        self.z:float = z
+
+
+armPositionsData = [
+    Position(0.0, 0.0, 0.0),
+    Position(-0.02083994, 0.03558095, -0.21626294),
+    Position(-0.27997975, 0.02595508, -0.41643387)
+]
+
+
+class ArmPositions:
+    def __init__(self, positions):
+        self.position1 = Position(positions[0].x, positions[0].y, positions[0].z)
+        self.position2 = Position(positions[1].x, positions[1].y, positions[1].z)
+        self.position3 = Position(positions[2].x, positions[2].y, positions[2].z)
+
+
+
+
+    def scale(self, x_factor, y_factor, z_factor):
+        scaled_position1 = Position(self.position1.x * x_factor, self.position1.y * y_factor, self.position1.z * z_factor)
+        scaled_position2 = Position(self.position2.x * x_factor, self.position2.y * y_factor, self.position2.z * z_factor)
+        scaled_position3 = Position(self.position3.x * x_factor, self.position3.y * y_factor, self.position3.z * z_factor)
+        return ArmPositions([scaled_position1, scaled_position2, scaled_position3])
+
+
+    def addOffset(self):
+        offset_position1 = Position(self.position1.x, self.position1.y + 5, self.position1.z - 55)
+        offset_position2 = Position(self.position2.x, self.position2.y + 5, self.position2.z - 55)
+        offset_position3 = Position(self.position3.x, self.position3.y + 5, self.position3.z - 55)
+        return ArmPositions([offset_position1, offset_position2, offset_position3])
+
+
+
+
+class EulerAngles:
+    def __init__(self, x_degrees, y_degrees, z_degrees):
+        self.x_degrees = x_degrees
+        self.y_degrees = y_degrees
+        self.z_degrees = z_degrees    
+
+
+
+
+# Define rotation matrices for x, y, and z axes
+def rotation_matrix_x(angle):
+    rad = math.radians(angle)
+    return np.array([
+        [1, 0, 0, 0],
+        [0, math.cos(rad), -math.sin(rad), 0],
+        [0, math.sin(rad), math.cos(rad), 0],
+        [0, 0, 0, 1]
+    ])
+
+
+def rotation_matrix_y(angle):
+    rad = math.radians(angle)
+    return np.array([
+        [math.cos(rad), 0, math.sin(rad), 0],
+        [0, 1, 0, 0],
+        [-math.sin(rad), 0, math.cos(rad), 0],
+        [0, 0, 0, 1]
+    ])
+
+
+def rotation_matrix_z(angle):
+    rad = math.radians(angle)
+    return np.array([
+        [math.cos(rad), -math.sin(rad), 0, 0],
+        [math.sin(rad), math.cos(rad), 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]
+    ])
+
+
+
+
+def draw_cylinder(x, y, z, color, eAngle: EulerAngles):
     quadric = gluNewQuadric()
     gluQuadricNormals(quadric, GLU_SMOOTH)
     gluQuadricTexture(quadric, GL_TRUE)
 
+
     glPushMatrix()
     glColor3f(*color)
     glTranslatef(x, y, z)
-    glRotatef(rotation_angle, *rotation_axis)
+
+
+    
+    # Apply rotations
+    rotation_matrix = np.dot(rotation_matrix_z(eAngle.z_degrees),
+                              np.dot(rotation_matrix_y(eAngle.y_degrees),
+                                     rotation_matrix_x(eAngle.x_degrees)))
+    glMultMatrixf(rotation_matrix)
+
+
     gluCylinder(quadric, 2, 2, 8, 32, 1)
     glPopMatrix()
 
-def draw_claw(x, y, z, color, rotation_angle, rotation_axis):
+
+
+
+def draw_cylinder_small(x, y, z, color, eAngle: EulerAngles):
     quadric = gluNewQuadric()
     gluQuadricNormals(quadric, GLU_SMOOTH)
     gluQuadricTexture(quadric, GL_TRUE)
 
+
     glPushMatrix()
     glColor3f(*color)
     glTranslatef(x, y, z)
-    glRotatef(rotation_angle, *rotation_axis)
-    gluCylinder(quadric, 1, 0.5, 6, 32, 1)
-    glPopMatrix()
+    
+    # Apply rotations
+    rotation_matrix = np.dot(rotation_matrix_z(eAngle.z_degrees),
+                              np.dot(rotation_matrix_y(eAngle.y_degrees),
+                                     rotation_matrix_x(eAngle.x_degrees)))
+    glMultMatrixf(rotation_matrix)
 
+
+    gluCylinder(quadric, 2, 2, 4, 32, 1)
+    glPopMatrix()
+    
+    end_point = np.array([0, 0, 4, 1])  # Representing the point in homogeneous coordinates
+
+
+# Apply rotation to the height vector
+    end_point = np.dot(rotation_matrix, end_point)
+
+
+# Extract x, y, z values from the transformed point
+    end_x, end_y, end_z, _ = end_point
+
+
+    end_x =  x - end_x 
+    end_y =  y + end_y
+    end_z =  z + end_z
+
+
+    
+    return end_x, end_y, end_z
+
+
+
+
+def draw_claw(x, y, z, color, eAngle: EulerAngles):
+    quadric = gluNewQuadric()
+    gluQuadricNormals(quadric, GLU_SMOOTH)
+    gluQuadricTexture(quadric, GL_TRUE)
+
+
+    glPushMatrix()
+    glColor3f(*color)
+    glTranslatef(x, y, z)
+
+
+
+
+    rotation_matrix = np.dot(rotation_matrix_z(eAngle.z_degrees),
+                              np.dot(rotation_matrix_y(eAngle.y_degrees),
+                                     rotation_matrix_x(eAngle.x_degrees)))
+    glMultMatrixf(rotation_matrix)
+
+
+    gluCylinder(quadric, 1, 0.5, 5, 32, 1)
+    glPopMatrix()
+    
 def draw_rectangle():
     glPushMatrix()
-    glColor3f(1.0, 0.5, 0.5)
+    glColor3f(1.0, 0, 0)
     glBegin(GL_QUADS)
     glVertex3f(-4, 0, initial_zoom)
     glVertex3f(4, 0, initial_zoom)
@@ -42,6 +205,7 @@ def draw_rectangle():
     glVertex3f(-4, 10, initial_zoom)
     glEnd()
     glPopMatrix()
+
 
 class OpenGLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
@@ -53,23 +217,47 @@ class OpenGLWidget(QOpenGLWidget):
         self.rotation_angle = 0
 
 
+
+
     def initializeGL(self):
         glEnable(GL_DEPTH_TEST)
-        gluPerspective(45, (800 / 600), 0.1, 60.0)
+        gluPerspective(45, (800 / 600), 0.1, 70.0)
         glTranslatef(0.0, 40, initial_zoom)
         glRotatef(-90, 1, 0, 0)
+
 
     def paintGL(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glPushMatrix()
         glRotatef(self.rotation_angle, 0, 0, 1)
+        
+        armPositions = ArmPositions(armPositionsData)
+        armPositions = armPositions.scale(1, 1, -40)
+        armPositions = armPositions.addOffset()
+        
+        position1: Position = armPositions.position1
+        position2: Position = armPositions.position2
+        position3: Position = armPositions.position3
+        
+        firstEulerAngle = EulerAngles(*firstSegmentTestEulerAngle)
+        draw_cylinder(position1.x, position1.y, position1.z, (1.0, 0, 0), firstEulerAngle)
+        
+        secondEulerAngle = EulerAngles(*secondSegmentTestEulerAngle)
+        draw_cylinder(position2.x, position2.y, position2.z, (0, 1.0, 0), secondEulerAngle)
+        
+        thirdEulerAngle = EulerAngles(*thirdSegmentTestEulerAngle)
+        x,y,z = draw_cylinder_small(position3.x, position3.y, position3.z, (0, 0, 1.0), thirdEulerAngle)
+        
+        claw1_rotation = EulerAngles(thirdEulerAngle.x_degrees, 45 + thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees)
+        claw2_rotation = EulerAngles(thirdEulerAngle.x_degrees, -45 + thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees)
+        
+        draw_claw(x, y, z, (0, 0, 1.0),claw1_rotation)
+        draw_claw(x, y, z, (0, 0, 1.0), claw2_rotation)
+
+
         draw_rectangle()
-        draw_cylinder(0, 5, -55, (0.5, 1.0, 0.5), 0, (0, 1, 0))
-        draw_cylinder(0, 5, -47, (0.5, 0.5, 1.0), 0, (0, 1, 0))
-        draw_cylinder(0, 5, -39, (0, 0, 1.0), 0, (0, 1, 0))
-        draw_claw(-0.5, 5, -31, (1.0, 1.0, 0), -45, (0, 1, 0))
-        draw_claw(0.5, 5, -31, (1.0, 1.0, 0), 45, (0, 1, 0))
         glPopMatrix()
+
 
     def resizeGL(self, w, h):
         glViewport(0, 0, w, h)
@@ -80,6 +268,13 @@ class OpenGLWidget(QOpenGLWidget):
         elif event.key() == Qt.Key_Right:
             self.rotation_angle += 20
         self.update()
+        
+    # tvec - Translation Vector
+    # rvec - Rotation Vector
+    def getVectors(self, tvec, rvec):
+        a = 3
+        self.update()
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -88,6 +283,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.openglWidget)
         self.setWindowTitle("OpenGL within PyQt5")
         self.setGeometry(100, 100, 800, 600)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
