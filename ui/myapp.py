@@ -29,8 +29,8 @@ class MyApp(QMainWindow):  # Inherit from QMainWindow
 
         # Create tabs
         self.tab_widget = QTabWidget()
-        servos_tab = ServosTabContent(ArmInterface(), self.camera_manager)  # Assuming ArmInterface() is initialized correctly
-        macro_tab = MacrosTabContent(self.camera_manager)
+        servos_tab = ServosTabContent(ArmInterface(), self.camera_manager, self.pose_estimator)  # Assuming ArmInterface() is initialized correctly
+        macro_tab = MacrosTabContent(self.camera_manager, self.pose_estimator)
         diagnostics_tab = DiagnosticsTabContent(self.camera_manager)
 
         # Add tabs

@@ -68,9 +68,9 @@ class ArmPositions:
 
 class EulerAngles:
     def __init__(self, x_degrees, y_degrees, z_degrees):
-        self.x_degrees = x_degrees
+        self.x_degrees = x_degrees + 180
         self.y_degrees = y_degrees
-        self.z_degrees = z_degrees    
+        self.z_degrees = z_degrees
 
 
 def update_positions_and_angles(new_positions, new_angles):
@@ -331,11 +331,14 @@ class OpenGLWidget(QOpenGLWidget):
         p_x_or_y = True
         transformed_points = transformCameraCoordinates(tvecs, p_x_or_y)
         
+        # print("POINTS: \n", transformed_points, "\n")
+        # print("ROTATIONS: \n", rvecs, "\n")
+        
         update_positions_and_angles(transformed_points, rvecs)
         
         # print("First Segment Euler Angle:", firstSegmentEulerAngle)
-        # print("Second Segment Euler Angle:", secondSegmentEulerAngle)
-        # print("Third Segment Euler Angle:", thirdSegmentEulerAngle)
+        print("Second Segment Euler Angle:", secondSegmentEulerAngle)
+        print("Third Segment Euler Angle:", thirdSegmentEulerAngle)
         
         armPositions = ArmPositions(armPositionsData)
         armPositions = armPositions.scale(1, 1, -40)
@@ -357,8 +360,8 @@ class OpenGLWidget(QOpenGLWidget):
         claw1_rotation = EulerAngles(thirdEulerAngle.x_degrees, 45 + thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees)
         claw2_rotation = EulerAngles(thirdEulerAngle.x_degrees, -45 + thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees)
         
-        draw_claw(x, y, z, (0, 0, 1.0),claw1_rotation)
-        draw_claw(x, y, z, (0, 0, 1.0), claw2_rotation)
+        # draw_claw(x, y, z, (0, 0, 1.0),claw1_rotation)
+        # draw_claw(x, y, z, (0, 0, 1.0), claw2_rotation)
 
 
         draw_rectangle()
