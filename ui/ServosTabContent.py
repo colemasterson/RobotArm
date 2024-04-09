@@ -8,12 +8,12 @@ from ui.TextListWidget import TextListWidget
 from ui.ServosControlWidget import ServosControlWidget  # Make sure this path is correct
 
 class ServosTabContent(QWidget):
-    def __init__(self, arm_interface, camera_manager):
+    def __init__(self, arm_interface, camera_manager, pose_estimator):
             super().__init__()
-            self.initUI(arm_interface, camera_manager)
+            self.initUI(arm_interface, camera_manager, pose_estimator)
             #self.camera_manager = camera_manager  
 
-    def initUI(self, arm_interface, camera_manager):
+    def initUI(self, arm_interface, camera_manager, pose_estimator):
         layout = QVBoxLayout(self)
         
         # Add the top widget to contain the top-left and top-right widgets
@@ -21,7 +21,7 @@ class ServosTabContent(QWidget):
         top_layout = QHBoxLayout()
         
         control_layout = QVBoxLayout()
-        servo_control_widget = ServosControlWidget(arm_interface, camera_manager)
+        servo_control_widget = ServosControlWidget(arm_interface, camera_manager, pose_estimator)
         #layout.addWidget(servo_control_widget)
         control_layout.addWidget(servo_control_widget)
         top_layout.addLayout(control_layout)
@@ -43,7 +43,7 @@ class ServosTabContent(QWidget):
         
         #camera_name = "Camera View"
         #camera_widget = CameraWidget(camera_name, 2)
-        camera_widget = CameraWidget("Camera View", camera_manager, camera_index=0)
+        camera_widget = CameraWidget("Camera View", camera_manager, camera_index=2)
         right_layout_lower.addWidget(camera_widget)
         
         

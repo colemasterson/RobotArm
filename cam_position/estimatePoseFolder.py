@@ -15,7 +15,7 @@ class PoseEstimator:
         self.distortion_coefficients = np.array((-3.24419802e-02,  9.59963589e-01,  1.32922653e-03, 1.65307029e-03, -2.71855997e+00))
 
 
-    def read_images_from_directory(directory_path):
+    def read_images_from_directory(self, directory_path):
         """
         Reads all images from the specified directory.
         
@@ -33,7 +33,7 @@ class PoseEstimator:
                 images.append(img)
         return images
 
-    def estimate_pose_on_images(images):
+    def estimate_pose_on_images(self, images):
         """
         Estimates the pose on each image using the pose estimation function.
         
@@ -46,12 +46,12 @@ class PoseEstimator:
         marker_estimations = defaultdict(list)
 
         for img in images:
-            (corners, ids, rejected) = cv2.aruco.detectMarkers(img, arucoDict, parameters=arucoParams)
+            (corners, ids, rejected) = cv2.aruco.detectMarkers(img, self.arucoDict, parameters=self.arucoParams)
             
             # Verify at least one ArUco marker was detected
             if ids is not None:
                 for i, corner in enumerate(corners):
-                    rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.02, matrix_coefficients, distortion_coefficients)
+                    rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.02, self.matrix_coefficients, self.distortion_coefficients)
                     # Print the translation and rotation vectors for each marker
                     # print(f"Marker {ids[i]}:")
                     # print(f"Translation Vector (tvec): {tvec}")
@@ -63,7 +63,7 @@ class PoseEstimator:
         
         return marker_estimations
 
-    def calculate_mode_per_marker(marker_estimations, decimals=4):
+    def calculate_mode_per_marker(self, marker_estimations, decimals=4):
         """
         Calculates the mode of the rounded tvec and rvec values for each marker ID,
         considering each component separately and rounding to the specified number of decimals.
@@ -94,7 +94,7 @@ class PoseEstimator:
         return mode_estimations
 
 
-    def rotation_vector_to_euler_angles(rvec):
+    def rotation_vector_to_euler_angles(self, rvec):
         # Convert rotation vector to rotation matrix
         R, _ = cv2.Rodrigues(rvec)
         
@@ -120,14 +120,15 @@ class PoseEstimator:
 
     def updatePos(self):     
         
-        images = self.read_images_from_directory("estimation_photos")
+        print("Updating Position...")
+        images = self.read_images_from_directory("cam_position/estimation_photos")
         marker_estimations = self.estimate_pose_on_images(images)
         mode_estimations = self.calculate_mode_per_marker(marker_estimations)
 
         marker_data = {}
     
         for marker_id, (mode_tvec, mode_rvec) in mode_estimations.items():
-            #print(f"Marker ID: {marker_id}, "
+            print(f"Marker ID: {marker_id}")
             #    f"Mode TVEC: X={mode_tvec[0]}, Y={mode_tvec[1]}, Z={mode_tvec[2]}, "
             #    f"Mode RVEC: X={mode_rvec[0]}, Y={mode_rvec[1]}, Z={mode_rvec[2]}")
             
@@ -146,5 +147,7 @@ class PoseEstimator:
             }
 
         # Write the marker data to a JSON file
-        with open('current_position.json', 'w') as json_file:
+        with open('cam_position/current_position.json', 'w') as json_file:
             json.dump(marker_data, json_file, indent=4)
+
+        print('finished writing to json file')

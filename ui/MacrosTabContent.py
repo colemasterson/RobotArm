@@ -10,9 +10,10 @@ from ui.TextListWidget import TextListWidget
 
 class MacrosTabContent(QWidget):
     
-    def __init__(self, camera_manager):
+    def __init__(self, camera_manager, pose_estimator):
         super().__init__()
-        self.camera_manager = camera_manager    
+        self.camera_manager = camera_manager
+        self.pose_estimator = pose_estimator
         self.initUI()
 
     def initUI(self):
@@ -23,7 +24,7 @@ class MacrosTabContent(QWidget):
         control_layout = QVBoxLayout()
         
         create_macro = CreateMacroWidget()
-        create_macro_sequence = CreateMacroSequence(self.camera_manager)
+        create_macro_sequence = CreateMacroSequence(self.camera_manager, self.pose_estimator)
         horiz_macro_layout = QHBoxLayout()
         horiz_macro_layout.addWidget(create_macro)
         horiz_macro_layout.addWidget(create_macro_sequence)
@@ -47,7 +48,7 @@ class MacrosTabContent(QWidget):
         right_layout_lower.addWidget(camera_info)
         
         #camera_name = "Camera View"
-        camera_widget = CameraWidget("Camera View", self.camera_manager, camera_index=0)
+        camera_widget = CameraWidget("Camera View", self.camera_manager, camera_index=2)
         #camera_widget = CameraWidget(camera_name)
         right_layout_lower.addWidget(camera_widget)
         

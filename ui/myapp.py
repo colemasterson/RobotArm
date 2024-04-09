@@ -4,7 +4,7 @@ from ui.CameraManager import CameraManager
 from ui.ServosTabContent import ServosTabContent
 from ui.MacrosTabContent import MacrosTabContent
 from ui.DiagnosticsTabContent import DiagnosticsTabContent
-
+from cam_position.estimatePoseFolder import PoseEstimator
 from arm_control.interfaces.arm_interface import ArmInterface
 
 class MyApp(QMainWindow):  # Inherit from QMainWindow
@@ -16,6 +16,9 @@ class MyApp(QMainWindow):  # Inherit from QMainWindow
         # Initialize CameraManager
         self.camera_manager = CameraManager()
 
+        # Initialize PoseEstimator
+        self.pose_estimator = PoseEstimator()
+
         # Create a central widget and layout for the QMainWindow
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -23,8 +26,8 @@ class MyApp(QMainWindow):  # Inherit from QMainWindow
 
         # Create tabs
         self.tab_widget = QTabWidget()
-        servos_tab = ServosTabContent(ArmInterface(), self.camera_manager)  # Assuming ArmInterface() is initialized correctly
-        macro_tab = MacrosTabContent(self.camera_manager)
+        servos_tab = ServosTabContent(ArmInterface(), self.camera_manager, self.pose_estimator)  # Assuming ArmInterface() is initialized correctly
+        macro_tab = MacrosTabContent(self.camera_manager, self.pose_estimator)
         diagnostics_tab = DiagnosticsTabContent(self.camera_manager)
 
         # Add tabs

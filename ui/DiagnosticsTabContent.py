@@ -17,7 +17,7 @@ class DiagnosticsTabContent(QWidget):
         layout = QVBoxLayout(self)
         # Create the camera widgets for top left and top right
         camera_widget_left = CameraWidget("Camera Left", self.camera_manager, camera_index=4)
-        camera_widget_right = CameraWidget("Camera Right",self.camera_manager, camera_index=2)
+        camera_widget_right = CameraWidget("Camera Right",self.camera_manager, camera_index=6)
         
         # Create buttons for saving images
         save_button_left = QPushButton("Save Left Image")
