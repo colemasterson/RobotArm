@@ -10,11 +10,12 @@ import config
 class ServoMovementWorker(QObject):
     finished = pyqtSignal()  # Signal to indicate task completion
 
-    def __init__(self, arm_interface, positions, camera_manager, save_dir, primary_camera_index, secondary_camera_index):
+    def __init__(self, arm_interface, positions, camera_manager, pose_estimator, save_dir, primary_camera_index, secondary_camera_index):
         super().__init__()
         self.arm_interface = arm_interface
         self.positions = positions
         self.camera_manager = camera_manager
+        self.pose_estimator = pose_estimator
         self.save_dir = save_dir
         self.primary_camera_index = primary_camera_index
         self.secondary_camera_index = secondary_camera_index
@@ -28,7 +29,7 @@ class ServoMovementWorker(QObject):
         for i in range(10):
             frame = self.camera_manager.get_frame(self.primary_camera_index)
            
-            img_path = os.path.join(self.save_dir, f"x_image_{i + 1}.jpg")
+            img_path = os.path.join(self.save_dir, "primary", f"x_image_{i + 1}.jpg")
             if frame is not None:
                 cv2.imwrite(img_path, frame)
                 print(f"Saved {img_path}")
@@ -36,18 +37,20 @@ class ServoMovementWorker(QObject):
         # Capture and save images from the secondary camera
         for i in range(10):
             frame = self.camera_manager.get_frame(self.secondary_camera_index)
-            img_path = os.path.join(self.save_dir, f"y_image_{i + 1}.jpg")
+            img_path = os.path.join(self.save_dir, "secondary", f"y_image_{i + 1}.jpg")
             if frame is not None:
                 cv2.imwrite(img_path, frame)
                 print(f"Saved {img_path} from secondary camera")
-        
+         # Recalculate the position
+        self.pose_estimator.updatePos()
         self.finished.emit()
 # Main widget class
 class ServosControlWidget(QWidget):
-    def __init__(self, arm_interface, camera_manager):
+    def __init__(self, arm_interface, camera_manager, pose_estimator):
         super().__init__()
         self.arm_interface = arm_interface
         self.camera_manager = camera_manager
+        self.pose_estimator = pose_estimator
         self.initUI()
 
     def initUI(self):
@@ -98,7 +101,7 @@ class ServosControlWidget(QWidget):
             os.makedirs(save_dir)
         
         self.thread = QThread()
-        self.worker = ServoMovementWorker(self.arm_interface, positions, self.camera_manager, save_dir,  primary_camera_index= config.camera_role_X, secondary_camera_index=config.camera_role_Y)
+        self.worker = ServoMovementWorker(self.arm_interface, positions, self.camera_manager , self.pose_estimator, save_dir,  primary_camera_index= config.camera_role_X, secondary_camera_index=config.camera_role_Y)
         self.worker.moveToThread(self.thread)
         
         self.thread.started.connect(self.worker.run)

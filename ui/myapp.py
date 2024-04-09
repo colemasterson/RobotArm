@@ -5,12 +5,13 @@ from ui.ServosTabContent import ServosTabContent
 from ui.MacrosTabContent import MacrosTabContent
 from ui.DiagnosticsTabContent import DiagnosticsTabContent
 from ui.CameraSelectionDialog import   CameraSelectionDialog
-
+from cam_position.estimatePoseFolder import PoseEstimator
 from arm_control.interfaces.arm_interface import ArmInterface
 
 class MyApp(QMainWindow):  # Inherit from QMainWindow
     def __init__(self):
         super().__init__()
+        self.pose_estimator = PoseEstimator()
         self.camera_manager = CameraManager()  # Set the camera_manager attribute here
         #self.camera_manager.reset()  # Now safe to call reset
         self.initUI()

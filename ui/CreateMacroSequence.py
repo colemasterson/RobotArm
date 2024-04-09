@@ -6,17 +6,19 @@ from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal
 from arm_control.arm_controller import RobotArmController
 from ui.CameraManager import CameraManager
 import config
+from cam_position.estimatePoseFolder import PoseEstimator
 
 
 
 class MacroExecutionWorker(QObject):
     finished = pyqtSignal()
 
-    def __init__(self, robot_arm_controller, macro_names, camera_manager, save_dir, primary_camera_index, secondary_camera_index):
+    def __init__(self, robot_arm_controller, macro_names, camera_manager, pose_estimator, save_dir, primary_camera_index, secondary_camera_index):
         super().__init__()
         self.robot_arm_controller = robot_arm_controller
         self.macro_names = macro_names
         self.camera_manager = camera_manager
+        self.pose_estimator = pose_estimator
         self.save_dir = save_dir
         self.primary_camera_index = primary_camera_index
         self.secondary_camera_index = secondary_camera_index
@@ -29,7 +31,7 @@ class MacroExecutionWorker(QObject):
         for i in range(10):
             frame = self.camera_manager.get_frame(self.primary_camera_index)
             if frame is not None: 
-                img_path = os.path.join(self.save_dir, f"x_image_{i + 1}.jpg")
+                img_path = os.path.join(self.save_dir, "primary", f"x_image_{i + 1}.jpg")
                 cv2.imwrite(img_path, frame)
                 print(f"Saved {img_path}")
             else:
@@ -39,18 +41,21 @@ class MacroExecutionWorker(QObject):
             frame = self.camera_manager.get_frame(self.secondary_camera_index)
             if frame is not None:
                 # All images from secondary camera are labeled 'y'
-                img_path = os.path.join(self.save_dir, f"y_image_{i + 1}.jpg")
+                img_path = os.path.join(self.save_dir, "secondary", f"y_image_{i + 1}.jpg")
                 cv2.imwrite(img_path, frame)
                 print(f"Saved {img_path} from secondary camera")
             else:
                 print(f"Failed to capture image {i + 1} from secondary camera")
+        # call the pose estimation
+        self.pose_estimator.updatePos()
         self.finished.emit()
 
 
 class CreateMacroSequence(QWidget):
-    def __init__(self, camera_manager):
+    def __init__(self, camera_manager, pose_estimator):
         super().__init__()
         self.camera_manager = camera_manager
+        self.pose_estimator = pose_estimator
         self.robot_arm_controller = RobotArmController()
         self.robot_arm_controller.define_macros()
         self.initUI()
@@ -133,7 +138,7 @@ class CreateMacroSequence(QWidget):
             os.makedirs(save_dir)
 
         self.thread = QThread()
-        self.worker = MacroExecutionWorker(self.robot_arm_controller, macro_names, self.camera_manager, save_dir, primary_camera_index= config.camera_role_X, secondary_camera_index=config.camera_role_Y)
+        self.worker = MacroExecutionWorker(self.robot_arm_controller, macro_names, self.camera_manager,self.pose_estimator, save_dir, primary_camera_index= config.camera_role_X, secondary_camera_index=config.camera_role_Y)
         self.worker.moveToThread(self.thread)
 
         self.thread.started.connect(self.worker.run)
