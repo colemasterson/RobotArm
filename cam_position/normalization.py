@@ -1,15 +1,58 @@
 import numpy as np
+import json
 
 x_camera_rotation = -90
 # Need to fix to an angle
 y_camera_rotation = 180
 
-
 # Parameter x_or_y
 #   When true - x camera
 #   When false - y camera
 
-def transformCameraCoordinates(camera_data, x_or_y):
+file_path = 'cam_position/current_position.json'
+
+import json
+
+def getPositionData():
+    try:
+        # Open the JSON file for reading
+        with open(file_path, 'r') as file:
+            # Parse the JSON file and convert it into a Python dictionary
+            data = json.load(file)
+
+        # Initialize the camera position arrays
+        camera_tvecs = []
+        camera_rvecs = []
+
+        # Order the keys as per requirement
+        keys_order = ['1', '2', '3']
+
+        for key in keys_order:
+            marker = data.get(key)
+            if marker is not None:  # Check if the marker exists
+                # Append the entire tvec as a list to the camera_tvecs
+                camera_tvecs.append(marker['tvec'])
+                # Convert rvec to a tuple and append to the camera_rvecs
+                camera_rvecs.append(tuple(marker['euler_angles']))
+
+    except FileNotFoundError:
+        print(f"No file found at '{file_path}'. Please check the file path.")
+        return [], []  # Return empty lists in case of error
+    except json.JSONDecodeError:
+        print("Error decoding JSON. Please check the file content.")
+        return [], []  # Return empty lists in case of error
+    
+    
+    list_of_tuples = [tuple(lst) for lst in camera_tvecs]
+
+    # Create a NumPy array from the list of tuples
+    camera_tvecs = np.array(list_of_tuples, dtype=object)
+    
+    print(camera_tvecs)
+
+    return camera_tvecs, camera_rvecs
+
+def transformCameraCoordinates(camera_position_data, x_or_y):
     
     rotation_needed = 0
     
@@ -61,7 +104,13 @@ def transformCameraCoordinates(camera_data, x_or_y):
             
         return points
 
-    raw_positions = camera_data
+    raw_positions = camera_position_data
+    
+    x_data = np.array([
+            [0.1561765, 0.08904364, 0.41930943],
+            [0.15295053, 0.05556669, 0.41380159],
+            [0.11283635, 0.02458074, 0.41529165]
+        ])
 
     # Min-Max Normalization
     min_max_normalized_positions = (raw_positions - raw_positions.min()) / (raw_positions.max() - raw_positions.min())
@@ -95,33 +144,44 @@ def transformCameraCoordinates(camera_data, x_or_y):
 
 if __name__ == '__main__':
     
-    # Do on X camera points
-    x_data = np.array([
-            [0.1561765, 0.08904364, 0.41930943],
-            [0.15295053, 0.05556669, 0.41380159],
-            [0.11283635, 0.02458074, 0.41529165]
-        ])
-    
+    tvecs, rvecs = getPositionData()
+
     # Use the X-Axis
     p_x_or_y = True
     
-    transformed_points = transformCameraCoordinates(x_data, p_x_or_y)
+    transformed_points = transformCameraCoordinates(tvecs, p_x_or_y)
     
-    print("X-Camera Transformed Points\n", transformed_points)
+    print("Transformed Points: \n", np.array(transformed_points))
+    print("Euler Angles: ", "\n", rvecs)
+
+    
+    # # Do on X camera points
+    # x_data = np.array([
+    #         [0.1561765, 0.08904364, 0.41930943],
+    #         [0.15295053, 0.05556669, 0.41380159],
+    #         [0.11283635, 0.02458074, 0.41529165]
+    #     ])
+    
+    # # Use the X-Axis
+    # p_x_or_y = True
+    
+    # transformed_points = transformCameraCoordinates(x_data, p_x_or_y)
+    
+    # print("X-Camera Transformed Points\n", transformed_points)
     
     # Do on Y camera points
-    y_data = np.array([
-        [0.14846807, 0.0959883, 0.40869124],
-        [0.14351266, 0.06353426, 0.40816555],
-        [0.15223124, 0.01297262, 0.41260389]
-    ])
+    # y_data = np.array([
+    #     [0.14846807, 0.0959883, 0.40869124],
+    #     [0.14351266, 0.06353426, 0.40816555],
+    #     [0.15223124, 0.01297262, 0.41260389]
+    # ])
     
     # Use the Y-Axis
-    p_x_or_y = False
+    # p_x_or_y = False
     
-    transformed_points = transformCameraCoordinates(y_data, p_x_or_y)
+    # transformed_points = transformCameraCoordinates(y_data, p_x_or_y)
     
-    print("Y-Camera Transformed Points\n", transformed_points)
+    # print("Y-Camera Transformed Points\n", transformed_points)
 
 #  (0., 0., 0.) 
 #  (0.03288238,  0.0034883, -0.21535375)  
