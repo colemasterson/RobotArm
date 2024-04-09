@@ -5,13 +5,14 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QComboBox, QLineEdit,
 from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal
 from arm_control.arm_controller import RobotArmController
 from ui.CameraManager import CameraManager
+import config
 
 
 
 class MacroExecutionWorker(QObject):
     finished = pyqtSignal()
 
-    def __init__(self, robot_arm_controller, macro_names, camera_manager, save_dir, primary_camera_index=0, secondary_camera_index=4):
+    def __init__(self, robot_arm_controller, macro_names, camera_manager, save_dir, primary_camera_index, secondary_camera_index):
         super().__init__()
         self.robot_arm_controller = robot_arm_controller
         self.macro_names = macro_names
@@ -131,9 +132,8 @@ class CreateMacroSequence(QWidget):
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
 
-        # Assuming the primary camera index is 2, and the secondary camera index for additional images is 4
         self.thread = QThread()
-        self.worker = MacroExecutionWorker(self.robot_arm_controller, macro_names, self.camera_manager, save_dir, primary_camera_index=2, secondary_camera_index=4)
+        self.worker = MacroExecutionWorker(self.robot_arm_controller, macro_names, self.camera_manager, save_dir, primary_camera_index= config.camera_role_X, secondary_camera_index=config.camera_role_Y)
         self.worker.moveToThread(self.thread)
 
         self.thread.started.connect(self.worker.run)

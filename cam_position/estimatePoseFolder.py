@@ -144,7 +144,7 @@ distortion = np.array((-3.24419802e-02,  9.59963589e-01,  1.32922653e-03, 1.6530
 
 # Main function to tie everything together
 if __name__ == "__main__":
-    directory_path = "cam_position/estimation_photos/"
+    directory_path = "estimation_photos"
     images = read_images_from_directory(directory_path)
     estimations = estimate_pose_on_images(images)
     mode_tvec, mode_rvec = calculate_mode(estimations)

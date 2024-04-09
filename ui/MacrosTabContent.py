@@ -7,6 +7,7 @@ from ui.CreateMacroWidget import CreateMacroWidget
 from ui.CreateMacroSequence import CreateMacroSequence
 from PyQt5.QtCore import Qt
 from ui.TextListWidget import TextListWidget
+import config 
 
 class MacrosTabContent(QWidget):
     
@@ -47,7 +48,7 @@ class MacrosTabContent(QWidget):
         right_layout_lower.addWidget(camera_info)
         
         #camera_name = "Camera View"
-        camera_widget = CameraWidget("Camera View", self.camera_manager, camera_index=0)
+        camera_widget = CameraWidget("Camera View", self.camera_manager, camera_index= config.camera_role_Z)
         #camera_widget = CameraWidget(camera_name)
         right_layout_lower.addWidget(camera_widget)
         

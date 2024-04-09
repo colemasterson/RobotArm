@@ -1,14 +1,16 @@
 import os
+
 import cv2
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSlider, QLineEdit, QPushButton
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, Qt
+import config
 
 # Worker class for moving servos and capturing images in a separate thread
 class ServoMovementWorker(QObject):
     finished = pyqtSignal()  # Signal to indicate task completion
 
-    def __init__(self, arm_interface, positions, camera_manager, save_dir, primary_camera_index=2, secondary_camera_index=4):
+    def __init__(self, arm_interface, positions, camera_manager, save_dir, primary_camera_index, secondary_camera_index):
         super().__init__()
         self.arm_interface = arm_interface
         self.positions = positions
@@ -96,7 +98,7 @@ class ServosControlWidget(QWidget):
             os.makedirs(save_dir)
         
         self.thread = QThread()
-        self.worker = ServoMovementWorker(self.arm_interface, positions, self.camera_manager, save_dir, primary_camera_index=2, secondary_camera_index=4)
+        self.worker = ServoMovementWorker(self.arm_interface, positions, self.camera_manager, save_dir,  primary_camera_index= config.camera_role_X, secondary_camera_index=config.camera_role_Y)
         self.worker.moveToThread(self.thread)
         
         self.thread.started.connect(self.worker.run)

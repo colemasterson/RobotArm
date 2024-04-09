@@ -1,21 +1,26 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTabWidget, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTabWidget, QWidget, QDialog
 from ui.CameraManager import CameraManager
 from ui.ServosTabContent import ServosTabContent
 from ui.MacrosTabContent import MacrosTabContent
 from ui.DiagnosticsTabContent import DiagnosticsTabContent
+from ui.CameraSelectionDialog import   CameraSelectionDialog
 
 from arm_control.interfaces.arm_interface import ArmInterface
 
 class MyApp(QMainWindow):  # Inherit from QMainWindow
     def __init__(self):
         super().__init__()
+        self.camera_manager = CameraManager()  # Set the camera_manager attribute here
+        #self.camera_manager.reset()  # Now safe to call reset
         self.initUI()
+       
 
     def initUI(self):
+        
         # Initialize CameraManager
-        self.camera_manager = CameraManager()
-
+        
+        #self.camera_manager.reset()
         # Create a central widget and layout for the QMainWindow
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -45,9 +50,14 @@ class MyApp(QMainWindow):  # Inherit from QMainWindow
 
 def main():
     app = QApplication(sys.argv)
-    my_app = MyApp()
-    my_app.show()  # It's often a good idea to call show on the window after construction
-    sys.exit(app.exec_())
+    
+    camera_selection_dialog = CameraSelectionDialog()
+    if camera_selection_dialog.exec_() == QDialog.Accepted:
+        mainWindow = MyApp()
+        mainWindow.show()
+    else:
+        sys.exit()  # Exit the application if the dialog is closed without confirmation
 
+    sys.exit(app.exec_())
 if __name__ == '__main__':
     main()

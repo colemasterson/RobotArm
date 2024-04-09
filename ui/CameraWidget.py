@@ -1,11 +1,11 @@
-import sys
+
 import cv2
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 class CameraWidget(QWidget):
-    def __init__(self, widget_name, camera_manager, camera_index=0, parent=None):
+    def __init__(self, widget_name, camera_manager, camera_index, parent=None):
         super(CameraWidget, self).__init__(parent)
         self.camera_manager = camera_manager
         self.camera_index = camera_index
