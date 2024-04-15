@@ -75,7 +75,7 @@ class CreateMacroSequence(QWidget):
         for macro_num in range(1, 9):  
             macro_label = QLabel(f'Macro {macro_num}:')
             macro_combobox = QComboBox()
-            macro_combobox.setMinimumWidth(400)
+            macro_combobox.setMinimumWidth(1100)
             self.macro_widgets[f'macro_{macro_num}'] = macro_combobox
 
             macro_names = list(self.robot_arm_controller.macros.keys())
@@ -94,19 +94,19 @@ class CreateMacroSequence(QWidget):
         self.run_custom_sequence_button.clicked.connect(self.on_runMacroSequence)
         vertical_layout.addWidget(self.run_custom_sequence_button)
 
-        self.run_preset_sequence_button = QPushButton('Run Preset Sequence')
-        self.run_preset_sequence_button.clicked.connect(self.on_runPresetSequence)
-        vertical_layout.addWidget(self.run_preset_sequence_button)
-
         self.runSequence_label = QLabel('Select Sequence:')
         self.runSequence_combobox = QComboBox()
-        self.runSequence_combobox.setMinimumWidth(275)
+        self.runSequence_combobox.setMinimumWidth(1100)
+        
         self.populate_sequences_combobox()
+        self.run_preset_sequence_button = QPushButton('Run Preset Sequence')
+        self.run_preset_sequence_button.clicked.connect(self.on_runPresetSequence)
         
         runSequence_layout = QHBoxLayout()
         runSequence_layout.addWidget(self.runSequence_label)
         runSequence_layout.addWidget(self.runSequence_combobox)
         vertical_layout.addLayout(runSequence_layout)
+        vertical_layout.addWidget(self.run_preset_sequence_button)
 
         self.setLayout(vertical_layout)
 

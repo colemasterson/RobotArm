@@ -382,11 +382,11 @@ class OpenGLWidget(QOpenGLWidget):
         thirdEulerAngle = EulerAngles(*thirdSegmentEulerAngle)
         x,y,z = draw_cylinder_small(position3.x, position3.y, position3.z, (0, 0, 1.0), thirdEulerAngle)
         
-        # claw1_rotation = EulerAngles(thirdEulerAngle.x_degrees, thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees - 120) #the 45 was on the y
-        # claw2_rotation = EulerAngles(thirdEulerAngle.x_degrees, thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees - 60)
+        claw1_rotation = EulerAngles(thirdEulerAngle.x_degrees, thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees - 30) #the 45 was on the y
+        claw2_rotation = EulerAngles(thirdEulerAngle.x_degrees, thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees - 90)
         
-        # draw_claw(-x, y, z, (0, 0, 1.0),claw1_rotation)
-        # draw_claw(-x, y, z, (0, 0, 1.0), claw2_rotation)
+        draw_claw(-x, y, z, (0, 0, 1.0),claw1_rotation)
+        draw_claw(-x, y, z, (0, 0, 1.0), claw2_rotation)
 
 
         draw_rectangle()

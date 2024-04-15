@@ -24,10 +24,10 @@ class MacrosTabContent(QWidget):
         top_layout = QHBoxLayout()
         control_layout = QVBoxLayout()
         
-        create_macro = CreateMacroWidget()
+        # create_macro = CreateMacroWidget()
         create_macro_sequence = CreateMacroSequence(self.camera_manager,self.pose_estimator)
         horiz_macro_layout = QHBoxLayout()
-        horiz_macro_layout.addWidget(create_macro)
+        #horiz_macro_layout.addWidget(create_macro)
         horiz_macro_layout.addWidget(create_macro_sequence)
         
         control_layout.addLayout(horiz_macro_layout)
@@ -45,8 +45,8 @@ class MacrosTabContent(QWidget):
         right_layout.addLayout(right_layout_lower)
         
         example_text_list = ["Servo 1:  Data", "Servo 2:  Data", "Servo 3:  Data", "Servo 4:  Data", "Servo 5:  Data", "Servo 6:  Data"]
-        camera_info = TextListWidget(example_text_list)
-        right_layout_lower.addWidget(camera_info)
+        # camera_info = TextListWidget(example_text_list)
+        # right_layout_lower.addWidget(camera_info)
         
         #camera_name = "Camera View"
         camera_widget = CameraWidget("Camera View", self.camera_manager, camera_index= config.camera_role_Z)

@@ -4,7 +4,7 @@ from ui.CameraWidget import CameraWidget
 from ui.RunButtonWidget import RunButtonWidget
 from ui.BottomWidget import BottomWidget
 from PyQt5.QtCore import Qt
-from ui.TextListWidget import TextListWidget
+# from ui.TextListWidget import TextListWidget
 from ui.ServosControlWidget import ServosControlWidget  # Make sure this path is correct
 import config
 
@@ -39,8 +39,8 @@ class ServosTabContent(QWidget):
         right_layout.addLayout(right_layout_lower)
         
         example_text_list = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"]
-        camera_info = TextListWidget(example_text_list)
-        right_layout_lower.addWidget(camera_info)
+        # camera_info = TextListWidget(example_text_list)
+        # right_layout_lower.addWidget(camera_info)
         
         camera_widget = CameraWidget("Camera View", camera_manager, camera_index=  config.camera_role_Z)
         right_layout_lower.addWidget(camera_widget)
