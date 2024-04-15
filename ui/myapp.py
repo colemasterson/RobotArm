@@ -19,9 +19,6 @@ class MyApp(QMainWindow):  # Inherit from QMainWindow
 
     def initUI(self):
         
-        # Initialize CameraManager
-        
-        #self.camera_manager.reset()
         # Create a central widget and layout for the QMainWindow
         central_widget = QWidget()
         self.setCentralWidget(central_widget)

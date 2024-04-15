@@ -42,8 +42,6 @@ class ServosTabContent(QWidget):
         camera_info = TextListWidget(example_text_list)
         right_layout_lower.addWidget(camera_info)
         
-        #camera_name = "Camera View"
-        #camera_widget = CameraWidget(camera_name, 2)
         camera_widget = CameraWidget("Camera View", camera_manager, camera_index=  config.camera_role_Z)
         right_layout_lower.addWidget(camera_widget)
         

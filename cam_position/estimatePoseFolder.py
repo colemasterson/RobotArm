@@ -128,9 +128,9 @@ class PoseEstimator:
         marker_data = {}
     
         for marker_id, (mode_tvec, mode_rvec) in mode_estimations.items():
-            print(f"Marker ID: {marker_id}")
-            #    f"Mode TVEC: X={mode_tvec[0]}, Y={mode_tvec[1]}, Z={mode_tvec[2]}, "
-            #    f"Mode RVEC: X={mode_rvec[0]}, Y={mode_rvec[1]}, Z={mode_rvec[2]}")
+            print(f"Marker ID: {marker_id}"
+                f"Mode TVEC: X={mode_tvec[0]}, Y={mode_tvec[1]}, Z={mode_tvec[2]}, "
+                f"Mode RVEC: X={mode_rvec[0]}, Y={mode_rvec[1]}, Z={mode_rvec[2]}")
             
             rvec_reconstructed = np.array(mode_rvec).reshape((3, 1))  # Reshape as needed for cv2.Rodrigues
             euler_angles = self.rotation_vector_to_euler_angles(rvec_reconstructed)

@@ -76,40 +76,12 @@ def pose_estimation(frame, aruco_dict_type, matrix_coefficients, distortion_coef
         for i in range(0, len(ids)):
            
             rvec, tvec, markerPoints = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.02, matrix_coefficients, distortion_coefficients)
-            # Print the translation and rotation vectors for each marker
-            print(f"Marker {ids[i]}:")
-            print(f"Translation Vector (tvec): {tvec}")
-            print(f"Rotation Vector (rvec): {rvec}")
-            print(f"Roation Vector in Euler Angles: {rotation_vector_to_euler_angles(rvec)}")
+            
             cv2.aruco.drawDetectedMarkers(frame, corners) 
 
             cv2.drawFrameAxes(frame, matrix_coefficients, distortion_coefficients, rvec, tvec, 0.01)  
 
     return frame
-
-def rotation_vector_to_euler_angles(rvec):
-    # Convert rotation vector to rotation matrix
-    R, _ = cv2.Rodrigues(rvec)
-    
-    # Calculate Euler angles from the rotation matrix
-    sy = np.sqrt(R[0,0] * R[0,0] +  R[1,0] * R[1,0])
-    singular = sy < 1e-6
-    
-    if not singular:
-        x = np.arctan2(R[2,1], R[2,2])
-        y = np.arctan2(-R[2,0], sy)
-        z = np.arctan2(R[1,0], R[0,0])
-    else:
-        x = np.arctan2(-R[1,2], R[1,1])
-        y = np.arctan2(-R[2,0], sy)
-        z = 0
-    
-    # Convert from radians to degrees
-    x = np.degrees(x)
-    y = np.degrees(y)
-    z = np.degrees(z)
-    
-    return x, y, z
 
 
     

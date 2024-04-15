@@ -6,7 +6,6 @@ from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal
 from arm_control.arm_controller import RobotArmController
 from ui.CameraManager import CameraManager
 import config
-from cam_position.estimatePoseFolder import PoseEstimator
 
 
 
