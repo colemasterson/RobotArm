@@ -68,9 +68,9 @@ class ArmPositions:
 
 class EulerAngles:
     def __init__(self, x_degrees, y_degrees, z_degrees):
-        self.x_degrees = x_degrees + 180
-        self.y_degrees = y_degrees
-        self.z_degrees = z_degrees
+        self.x_degrees = 0 # many inverted accesses always going to be zero with our robot
+        self.y_degrees = -z_degrees # tuned negative to flip view
+        self.z_degrees = x_degrees
 
 
 def update_positions_and_angles(new_positions, new_angles):
@@ -133,8 +133,32 @@ def draw_cylinder(x, y, z, color, eAngle: EulerAngles):
                                      rotation_matrix_x(eAngle.x_degrees)))
     glMultMatrixf(rotation_matrix)
 
-
+    # print("rotation Matrix: ", rotation_matrix)
+    
     gluCylinder(quadric, 2, 2, 8, 32, 1)
+    glPopMatrix()
+    
+def draw_cylinder_medium(x, y, z, color, eAngle: EulerAngles):
+    quadric = gluNewQuadric()
+    gluQuadricNormals(quadric, GLU_SMOOTH)
+    gluQuadricTexture(quadric, GL_TRUE)
+
+
+    glPushMatrix()
+    glColor3f(*color)
+    glTranslatef(x, y, z)
+
+
+    
+    # Apply rotations
+    rotation_matrix = np.dot(rotation_matrix_z(eAngle.z_degrees),
+                              np.dot(rotation_matrix_y(eAngle.y_degrees),
+                                     rotation_matrix_x(eAngle.x_degrees)))
+    glMultMatrixf(rotation_matrix)
+
+    # print("rotation Matrix: ", rotation_matrix)
+    
+    gluCylinder(quadric, 2, 2, 5, 32, 1)
     glPopMatrix()
 
 
@@ -155,6 +179,7 @@ def draw_cylinder_small(x, y, z, color, eAngle: EulerAngles):
                               np.dot(rotation_matrix_y(eAngle.y_degrees),
                                      rotation_matrix_x(eAngle.x_degrees)))
     glMultMatrixf(rotation_matrix)
+    # print("rotation Matrix: ", rotation_matrix)
 
 
     gluCylinder(quadric, 2, 2, 4, 32, 1)
@@ -331,17 +356,17 @@ class OpenGLWidget(QOpenGLWidget):
         p_x_or_y = True
         transformed_points = transformCameraCoordinates(tvecs, p_x_or_y)
         
-        # print("POINTS: \n", transformed_points, "\n")
-        # print("ROTATIONS: \n", rvecs, "\n")
+        print("POINTS: \n", transformed_points, "\n")
+        print("ROTATIONS: \n", rvecs, "\n")
         
         update_positions_and_angles(transformed_points, rvecs)
         
         # print("First Segment Euler Angle:", firstSegmentEulerAngle)
-        print("Second Segment Euler Angle:", secondSegmentEulerAngle)
-        print("Third Segment Euler Angle:", thirdSegmentEulerAngle)
+        # print("Second Segment Euler Angle:", secondSegmentEulerAngle)
+        # print("Third Segment Euler Angle:", thirdSegmentEulerAngle)
         
         armPositions = ArmPositions(armPositionsData)
-        armPositions = armPositions.scale(1, 1, -40)
+        armPositions = armPositions.scale(1, 1, -50)
         armPositions = armPositions.addOffset()
         
         position1: Position = armPositions.position1
@@ -349,7 +374,7 @@ class OpenGLWidget(QOpenGLWidget):
         position3: Position = armPositions.position3
         
         firstEulerAngle = EulerAngles(*firstSegmentEulerAngle)
-        draw_cylinder(position1.x, position1.y, position1.z, (1.0, 0, 0), firstEulerAngle)
+        draw_cylinder_medium(position1.x, position1.y, position1.z, (1.0, 0, 0), firstEulerAngle)
         
         secondEulerAngle = EulerAngles(*secondSegmentEulerAngle)
         draw_cylinder(position2.x, position2.y, position2.z, (0, 1.0, 0), secondEulerAngle)
@@ -357,11 +382,11 @@ class OpenGLWidget(QOpenGLWidget):
         thirdEulerAngle = EulerAngles(*thirdSegmentEulerAngle)
         x,y,z = draw_cylinder_small(position3.x, position3.y, position3.z, (0, 0, 1.0), thirdEulerAngle)
         
-        claw1_rotation = EulerAngles(thirdEulerAngle.x_degrees, 45 + thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees)
-        claw2_rotation = EulerAngles(thirdEulerAngle.x_degrees, -45 + thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees)
+        # claw1_rotation = EulerAngles(thirdEulerAngle.x_degrees, thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees - 120) #the 45 was on the y
+        # claw2_rotation = EulerAngles(thirdEulerAngle.x_degrees, thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees - 60)
         
-        # draw_claw(x, y, z, (0, 0, 1.0),claw1_rotation)
-        # draw_claw(x, y, z, (0, 0, 1.0), claw2_rotation)
+        # draw_claw(-x, y, z, (0, 0, 1.0),claw1_rotation)
+        # draw_claw(-x, y, z, (0, 0, 1.0), claw2_rotation)
 
 
         draw_rectangle()
