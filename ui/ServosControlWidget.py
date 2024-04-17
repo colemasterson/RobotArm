@@ -5,13 +5,14 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSlider, 
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, Qt
 import config
-
+import xarm
 # Worker class for moving servos and capturing images in a separate thread
 class ServoMovementWorker(QObject):
     finished = pyqtSignal()  # Signal to indicate task completion
 
     def __init__(self, arm_interface, positions, camera_manager, pose_estimator, save_dir, primary_camera_index, secondary_camera_index):
         super().__init__()
+        self.servoangle = xarm.Controller("USB")
         self.arm_interface = arm_interface
         self.positions = positions
         self.camera_manager = camera_manager
@@ -42,7 +43,8 @@ class ServoMovementWorker(QObject):
                 cv2.imwrite(img_path, frame)
                 print(f"Saved {img_path} from secondary camera")
          # Recalculate the position
-        self.pose_estimator.updatePos()
+        s6 = self.servoangle.getPosition(6, True)
+        self.pose_estimator.updatePos(s6)
         self.finished.emit()
 # Main widget class
 class ServosControlWidget(QWidget):

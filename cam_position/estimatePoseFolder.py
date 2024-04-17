@@ -14,7 +14,6 @@ class PoseEstimator:
         self.matrix_coefficients = np.array(((1.02576077e+03, 0, 3.17826827e+02),(0, 1.03079475e+03, 2.29146820e+02),(0,0,1)))
         self.distortion_coefficients = np.array((-3.24419802e-02,  9.59963589e-01,  1.32922653e-03, 1.65307029e-03, -2.71855997e+00))
 
-
     def read_images_from_directory(self, directory_path):
         """
         Reads all images from the specified directory.
@@ -117,33 +116,63 @@ class PoseEstimator:
         z = np.degrees(z)
         
         return x, y, z
-
-    def updatePos(self):     
+          
+    def adjust_marker_data(self, marker_id, euler_angles, use_secondary_camera):
+        # Define the mapping from new marker IDs to original marker IDs
+        id_mapping = {4: 1, 5: 2, 6: 3}
         
+        # Check if the detected marker ID is one of the new ones
+        if marker_id in id_mapping:
+            # Map the marker ID to its corresponding original ID
+            new_marker_id = id_mapping[marker_id]
+            
+            # Rotate the z value of the Euler angles by 180 degrees
+            adjusted_euler_angles = list(euler_angles)
+            adjusted_euler_angles[2] = (euler_angles[2] + 180) % 360
+            
+            # Further adjust if using the secondary camera
+            if use_secondary_camera:
+                adjusted_euler_angles[2] = (adjusted_euler_angles[2] - 90) % 360
+            
+            return new_marker_id, adjusted_euler_angles
+        else:
+            # Adjust if using the secondary camera
+            if use_secondary_camera:
+                euler_angles[2] = (euler_angles[2] - 90) % 360
+            
+            return marker_id, euler_angles
+        
+    def updatePos(self, s6angle):
+        photo_path = "cam_position/estimation_photos/"
+        use_secondary_camera = False
         print("Updating Position...")
-        images = self.read_images_from_directory("cam_position/estimation_photos/secondary")
+        print(f"Current s6angle: {s6angle}")
+        if s6angle > 60.0:
+            print("Servo 6 rotated towards camera y, using camera y image path(secondary).")
+            use_secondary_camera = True
+            photo_path += "secondary/"
+        else:
+            print("Using camera x image path(primary).")
+            photo_path += "primary/"
+
+        images = self.read_images_from_directory(photo_path)
         marker_estimations = self.estimate_pose_on_images(images)
         mode_estimations = self.calculate_mode_per_marker(marker_estimations)
 
         marker_data = {}
-    
-        for marker_id, (mode_tvec, mode_rvec) in mode_estimations.items():
-            print(f"Marker ID: {marker_id}"
-                f"Mode TVEC: X={mode_tvec[0]}, Y={mode_tvec[1]}, Z={mode_tvec[2]}, "
-                f"Mode RVEC: X={mode_rvec[0]}, Y={mode_rvec[1]}, Z={mode_rvec[2]}")
-            
-            rvec_reconstructed = np.array(mode_rvec).reshape((3, 1))  # Reshape as needed for cv2.Rodrigues
-            euler_angles = self.rotation_vector_to_euler_angles(rvec_reconstructed)
-            #print("Mode Euler angles:", euler_angles)
 
-            # Convert marker_id to string to use as key in JSON
-            marker_id_str = str(marker_id)
+        for marker_id, (mode_tvec, mode_rvec) in mode_estimations.items():
+            # Adjust marker ID and Euler angles if necessary
+            adjusted_marker_id, adjusted_euler_angles = self.adjust_marker_data(marker_id, self.rotation_vector_to_euler_angles(np.array(mode_rvec).reshape((3, 1))), use_secondary_camera)
             
-            # Store the marker data using the stringified marker_id as key
+            print(f"Marker ID: {adjusted_marker_id} Mode TVEC: X={mode_tvec[0]}, Y={mode_tvec[1]}, Z={mode_tvec[2]}, Mode RVEC: X={mode_rvec[0]}, Y={mode_rvec[1]}, Z={mode_rvec[2]}")
+
+            # Store the marker data using the stringified adjusted marker ID as key
+            marker_id_str = str(adjusted_marker_id)
             marker_data[marker_id_str] = {
                 "tvec": mode_tvec,
                 "rvec": mode_rvec,
-                "euler_angles": euler_angles  # Assuming euler_angles is already a list or tuple of floats
+                "euler_angles": adjusted_euler_angles
             }
 
         # Write the marker data to a JSON file
