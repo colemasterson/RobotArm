@@ -14,6 +14,8 @@ file_path = 'cam_position/current_position.json'
 import json
 
 def getPositionData():
+     
+    file_found = True   
     try:
         # Open the JSON file for reading
         with open(file_path, 'r') as file:
@@ -37,11 +39,22 @@ def getPositionData():
 
     except FileNotFoundError:
         print(f"No file found at '{file_path}'. Please check the file path.")
+        file_found = False
         return [], []  # Return empty lists in case of error
     except json.JSONDecodeError:
         print("Error decoding JSON. Please check the file content.")
+        file_found = False
         return [], []  # Return empty lists in case of error
     
+    
+    if (len(data) != 3 or file_found == False):
+        default_tvecs = np.array([
+            [0.1561765, 0.08904364, 0.41930943],
+            [0.15295053, 0.05556669, 0.41380159],
+            [0.11283635, 0.02458074, 0.41529165]])
+        default_rvecs = np.array([(0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (0.0, -90.0, 0.0)])
+        
+        return default_tvecs, default_rvecs
     
     list_of_tuples = [tuple(lst) for lst in camera_tvecs]
 
