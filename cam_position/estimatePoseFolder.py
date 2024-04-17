@@ -119,7 +119,7 @@ class PoseEstimator:
           
     def adjust_marker_data(self, marker_id, euler_angles, use_secondary_camera):
         # Define the mapping from new marker IDs to original marker IDs
-        id_mapping = {4: 1, 5: 2, 6: 3}
+        id_mapping = {4: 3, 5: 2, 6: 1}
         
         # Check if the detected marker ID is one of the new ones
         if marker_id in id_mapping:
@@ -128,17 +128,17 @@ class PoseEstimator:
             
             # Rotate the z value of the Euler angles by 180 degrees
             adjusted_euler_angles = list(euler_angles)
-            adjusted_euler_angles[2] = (euler_angles[2] + 180) % 360
+            adjusted_euler_angles[1] = (euler_angles[0] + 180) % 360
             
             # Further adjust if using the secondary camera
             if use_secondary_camera:
-                adjusted_euler_angles[2] = (adjusted_euler_angles[2] - 90) % 360
+                adjusted_euler_angles[1] = (adjusted_euler_angles[0] - 90) % 360
             
             return new_marker_id, adjusted_euler_angles
         else:
             # Adjust if using the secondary camera
             if use_secondary_camera:
-                euler_angles[2] = (euler_angles[2] - 90) % 360
+                euler_angles[1] = (euler_angles[0] - 90) % 360
             
             return marker_id, euler_angles
         
