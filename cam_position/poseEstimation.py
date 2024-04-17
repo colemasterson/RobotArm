@@ -96,7 +96,7 @@ intrinsic_camera = np.array(((1.02576077e+03, 0, 3.17826827e+02),(0, 1.03079475e
 distortion = np.array((-3.24419802e-02,  9.59963589e-01,  1.32922653e-03, 1.65307029e-03, -2.71855997e+00))
 
 
-cap = cv2.VideoCapture(6)
+cap = cv2.VideoCapture(0)
 
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)

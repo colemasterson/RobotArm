@@ -46,7 +46,7 @@ class MacroExecutionWorker(QObject):
             else:
                 print(f"Failed to capture image {i + 1} from secondary camera")
         # call the pose estimation
-        self.pose_estimator.updatePos()
+        self.pose_estimator.updatePos(self.robot_arm_controller.arm.getPosition(6, True))
         self.finished.emit()
 
 
