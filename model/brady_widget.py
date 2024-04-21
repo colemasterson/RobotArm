@@ -10,7 +10,7 @@ from cam_position.normalization import getPositionData, transformCameraCoordinat
 # from positions need to get values some how.
 yaw, pitch = 0, 0
 initial_zoom = -55
-rotateModelY = 90
+# rotateModelY = 90
 
 
 update_armPositionsData =[[ 0.,      0.,        0.        ],
@@ -255,11 +255,6 @@ class OpenGLWidget(QOpenGLWidget):
 
 
     def paintGL(self):
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glPushMatrix()
-        glRotatef(self.rotation_angle, 0, 0, 1)
-        global rotateModelY
-
         
         # tvecs, rvecs, use_secondary_camera= getPositionData()
         position_data = getPositionData()
@@ -274,7 +269,20 @@ class OpenGLWidget(QOpenGLWidget):
         transformed_points = transformCameraCoordinates(tvecs, p_x_or_y)
         
         update_positions_and_angles(transformed_points, rvecs)
-
+        
+        rotateModelY = 0
+        
+        if use_secondary_camera:
+            # glRotatef(-rotateModelY, 0, 0, 1)
+            # if rotateModelY > 0:
+            rotateModelY = -90
+        else:
+            rotateModelY = 0
+        
+        
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glPushMatrix()
+        glRotatef(self.rotation_angle + rotateModelY, 0, 0, 1)
         
         armPositions = ArmPositions(armPositionsData)
         armPositions = armPositions.scale(40, 1, -40)
@@ -295,14 +303,6 @@ class OpenGLWidget(QOpenGLWidget):
 
         draw_rectangle()
         glPopMatrix()
-        if use_secondary_camera:
-            glRotatef(-rotateModelY, 0, 0, 1)
-            if rotateModelY > 0:
-                rotateModelY = rotateModelY - 90
-        else:
-            rotateModelY = 90
-        
-
 
 
     def resizeGL(self, w, h):
@@ -310,9 +310,9 @@ class OpenGLWidget(QOpenGLWidget):
         
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Left:
-            self.rotation_angle += -20
+            self.rotation_angle += -30
         elif event.key() == Qt.Key_Right:
-            self.rotation_angle += 20
+            self.rotation_angle += 30
         self.update()
         
     # tvec - Translation Vector
