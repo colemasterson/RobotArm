@@ -356,8 +356,8 @@ class OpenGLWidget(QOpenGLWidget):
         p_x_or_y = True
         transformed_points = transformCameraCoordinates(tvecs, p_x_or_y)
         
-        print("POINTS: \n", transformed_points, "\n")
-        print("ROTATIONS: \n", rvecs, "\n")
+        #print("POINTS: \n", transformed_points, "\n")
+        #print("ROTATIONS: \n", rvecs, "\n")
         
         update_positions_and_angles(transformed_points, rvecs)
         

@@ -118,6 +118,9 @@ class PoseEstimator:
         return x, y, z
           
     def adjust_marker_data(self, marker_id, euler_angles, use_secondary_camera):
+        # Convert tuple to list for mutability
+        euler_angles = list(euler_angles)
+
         # Define the mapping from new marker IDs to original marker IDs
         id_mapping = {4: 3, 5: 2, 6: 1}
         
@@ -127,27 +130,27 @@ class PoseEstimator:
             new_marker_id = id_mapping[marker_id]
             
             # Rotate the z value of the Euler angles by 180 degrees
-            adjusted_euler_angles = list(euler_angles)
-            adjusted_euler_angles[1] = (euler_angles[0] + 180) % 360
+            euler_angles[2] = (euler_angles[2] + 180) % 360
             
             # Further adjust if using the secondary camera
             if use_secondary_camera:
-                adjusted_euler_angles[1] = (adjusted_euler_angles[0] - 90) % 360
+                euler_angles[2] = (euler_angles[2] - 90) % 360
             
-            return new_marker_id, adjusted_euler_angles
+            return new_marker_id, euler_angles
         else:
             # Adjust if using the secondary camera
             if use_secondary_camera:
-                euler_angles[1] = (euler_angles[0] - 90) % 360
+                euler_angles[2] = (euler_angles[2] - 90) % 360
             
             return marker_id, euler_angles
+
         
     def updatePos(self, s6angle):
         photo_path = "cam_position/estimation_photos/"
         use_secondary_camera = False
         print("Updating Position...")
         print(f"Current s6angle: {s6angle}")
-        if s6angle > 60.0:
+        if s6angle > 60.0 or s6angle < -30:
             print("Servo 6 rotated towards camera y, using camera y image path(secondary).")
             use_secondary_camera = True
             photo_path += "secondary/"

@@ -29,7 +29,7 @@ ARUCO_DICT = {
 aruco_type = "DICT_5X5_1000"
 
 #Specify the ID associated with the new marker
-id = 32
+id = 1
 
 
 #Grab the predefined dictionary and parameters from the cv2.aruco lib

@@ -10,8 +10,7 @@ y_camera_rotation = 180
 #   When false - y camera
 
 file_path = 'cam_position/current_position.json'
-
-import json
+backup_file_path = 'cam_position/backup_position.json'
 
 def getPositionData():
     try:
@@ -19,6 +18,11 @@ def getPositionData():
         with open(file_path, 'r') as file:
             # Parse the JSON file and convert it into a Python dictionary
             data = json.load(file)
+
+        if not all(marker in data for marker in ['1', '2', '3']):
+            print("Not all markers detected, loading backup data.")
+            with open(backup_file_path, 'r') as file:
+                data = json.load(file)
 
         # Initialize the camera position arrays
         camera_tvecs = []
