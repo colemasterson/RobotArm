@@ -3,6 +3,7 @@ import json
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QImage, QPixmap
+from cam_position.normalization import getPositionData, transformCameraCoordinates
 
 class ServoDataWidget(QWidget):
     def __init__(self):
@@ -37,9 +38,18 @@ class ServoDataWidget(QWidget):
     def setData(self, data):
         last_three_data = list(data.items())[-3:]
         
+        position_data = getPositionData()
+        if len(position_data) == 2:
+            tvecs, rvecs = position_data
+            use_secondary_camera = False  # or whatever default value makes sense in your context
+        elif len(position_data) == 3:
+            tvecs, rvecs, use_secondary_camera = position_data
+        # Flag to tell if using x or y axis, x - true, y - false
+        p_x_or_y = True
+        transformed_points = transformCameraCoordinates(tvecs, p_x_or_y)
         servo_data = [{
             "id": key,
-            "xyz": f"{value['tvec'][0]}, {value['tvec'][1]}, {value['tvec'][2]}",
+            "xyz": f"{transformed_points[int(key)-1][0], transformed_points[int(key)-1][1], transformed_points[int(key)-1][2]}",
             "euler_xyz": f"{value['euler_angles'][0]}, {value['euler_angles'][1]}, {value['euler_angles'][2]}"
         } for key, value in last_three_data]
         self.updateServoData(servo_data)
