@@ -128,17 +128,17 @@ class PoseEstimator:
             
             # Rotate the z value of the Euler angles by 180 degrees
             adjusted_euler_angles = list(euler_angles)
-            adjusted_euler_angles[1] = (euler_angles[0] + 180) % 360
+            adjusted_euler_angles[1] = (euler_angles[1] + 180) % 360
             
             # Further adjust if using the secondary camera
             if use_secondary_camera:
-                adjusted_euler_angles[1] = (adjusted_euler_angles[0] - 90) % 360
+                adjusted_euler_angles[1] = (adjusted_euler_angles[1] - 90) % 360
             
             return new_marker_id, adjusted_euler_angles
         else:
             # Adjust if using the secondary camera
             if use_secondary_camera:
-                euler_angles[1] = (euler_angles[0] - 90) % 360
+                euler_angles[1] = (euler_angles[1] - 90) % 360
             
             return marker_id, euler_angles
         
@@ -174,9 +174,14 @@ class PoseEstimator:
                 "rvec": mode_rvec,
                 "euler_angles": adjusted_euler_angles
             }
-
-        # Write the marker data to a JSON file
+            second_cam_bool = 0
+            if use_secondary_camera:
+                second_cam_bool =1
+            all_data = {
+                "use_secondary_camera": second_cam_bool,
+                **marker_data
+            }
         with open('cam_position/current_position.json', 'w') as json_file:
-            json.dump(marker_data, json_file, indent=4)
+            json.dump(all_data, json_file, indent=4)
 
         print('finished writing to json file')

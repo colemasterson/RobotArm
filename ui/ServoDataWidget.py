@@ -35,11 +35,13 @@ class ServoDataWidget(QWidget):
             print(f"Error loading or updating data from JSON: {e}")
 
     def setData(self, data):
+        last_three_data = list(data.items())[-3:]
+        
         servo_data = [{
             "id": key,
             "xyz": f"{value['tvec'][0]}, {value['tvec'][1]}, {value['tvec'][2]}",
             "euler_xyz": f"{value['euler_angles'][0]}, {value['euler_angles'][1]}, {value['euler_angles'][2]}"
-        } for key, value in data.items()]
+        } for key, value in last_three_data]
         self.updateServoData(servo_data)
 
     def clearLayout(self, layout):
