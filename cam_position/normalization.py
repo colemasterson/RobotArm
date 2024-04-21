@@ -4,6 +4,8 @@ import json
 x_camera_rotation = -90
 # Need to fix to an angle
 y_camera_rotation = 180
+x_camera_123 = [(2.4617, -.9944, 5.2591), (-3.8556, -1.7711, 1.7748), (.005, -19.0321, 7.0616)]
+y_camera_654 = [(-3.5008,1.1984, 0.8327),(-10.2193, -4.7217, 0.2006),(16.0373,1.0143, -5.0564)]
 
 # Parameter x_or_y
 #   When true - x camera
@@ -16,11 +18,18 @@ def getPositionData():
      
     data = []
     file_found = True   
+    secondary_camera = 0
+    use_secondary_camera = False
+    
     try:
         # Open the JSON file for reading
         with open(file_path, 'r') as file:
             # Parse the JSON file and convert it into a Python dictionary
             data = json.load(file)
+            secondary_camera = data.get("use_secondary_camera")
+            if secondary_camera == 1:
+                use_secondary_camera = True
+            print("Value of 'use_secondary_camera':", use_secondary_camera)
 
         if not all(marker in data for marker in ['1', '2', '3']):
             print("Not all markers detected, loading backup data.")
@@ -41,6 +50,13 @@ def getPositionData():
                 camera_tvecs.append(marker['tvec'])
                 # Convert rvec to a tuple and append to the camera_rvecs
                 camera_rvecs.append(tuple(marker['euler_angles']))
+        print("Value of 'tvec':", camera_tvecs)
+        print("Value of 'euler_angles':", camera_rvecs)
+        # if use_secondary_camera:
+        #     camera_rvecs = [(vec1[0] + vec2[0], vec1[1] + vec2[1], vec1[2] + vec2[2]) for vec1, vec2 in zip(camera_rvecs, y_camera_654)]
+        # else:
+        #     camera_rvecs = [(vec1[0] + vec2[0], vec1[1] + vec2[1], vec1[2] + vec2[2]) for vec1, vec2 in zip(camera_rvecs, x_camera_123)]
+
 
     except FileNotFoundError:
         print(f"No file found at '{file_path}'. Please check the file path.")
@@ -51,20 +67,22 @@ def getPositionData():
         file_found = False
     
     
-    if (len(data) != 3 or file_found == False):
+    if (len(data) != 4 or file_found == False):
         default_tvecs = np.array([
             [0.1561765, 0.08904364, 0.41930943],
             [0.15295053, 0.05556669, 0.41380159],
             [0.11283635, 0.02458074, 0.41529165]])
         default_rvecs = np.array([(0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0)])
         
-        return default_tvecs, default_rvecs
+        return default_tvecs, default_rvecs, use_secondary_camera
     
     list_of_tuples = [tuple(lst) for lst in camera_tvecs]
 
     # Create a NumPy array from the list of tuples
     camera_tvecs = np.array(list_of_tuples, dtype=object)
 
+    # camera_rvecs add the offsets
+    
     return camera_tvecs, camera_rvecs
 
 def transformCameraCoordinates(camera_position_data, x_or_y):
@@ -159,7 +177,7 @@ def transformCameraCoordinates(camera_position_data, x_or_y):
 
 if __name__ == '__main__':
     
-    tvecs, rvecs = getPositionData()
+    tvecs, rvecs, use_secondary_camera = getPositionData()
 
     # Use the X-Axis
     p_x_or_y = True

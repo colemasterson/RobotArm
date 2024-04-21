@@ -127,11 +127,9 @@ def draw_cylinder(x, y, z, color, eAngle: EulerAngles):
 
 
     
-    # Apply rotations
-    rotation_matrix = np.dot(rotation_matrix_z(eAngle.z_degrees),
-                              np.dot(rotation_matrix_y(eAngle.y_degrees),
-                                     rotation_matrix_x(eAngle.x_degrees)))
-    glMultMatrixf(rotation_matrix)
+    glRotatef(eAngle.z_degrees, 0, 0, 1)  # Rotate around z-axis
+    glRotatef(eAngle.y_degrees, 0, 1, 0)  # Rotate around y-axis
+    glRotatef(eAngle.x_degrees, 1, 0, 0)  # Rotate around x-axis
 
     # print("rotation Matrix: ", rotation_matrix)
     
@@ -150,11 +148,10 @@ def draw_cylinder_medium(x, y, z, color, eAngle: EulerAngles):
 
 
     
-    # Apply rotations
-    rotation_matrix = np.dot(rotation_matrix_z(eAngle.z_degrees),
-                              np.dot(rotation_matrix_y(eAngle.y_degrees),
-                                     rotation_matrix_x(eAngle.x_degrees)))
-    glMultMatrixf(rotation_matrix)
+    
+    glRotatef(eAngle.z_degrees, 0, 0, 1)  # Rotate around z-axis
+    glRotatef(eAngle.y_degrees, 0, 1, 0)  # Rotate around y-axis
+    glRotatef(eAngle.x_degrees, 1, 0, 0)  # Rotate around x-axis
 
     # print("rotation Matrix: ", rotation_matrix)
     
@@ -178,11 +175,14 @@ def draw_cylinder_small(x, y, z, color, eAngle: EulerAngles):
     rotation_matrix = np.dot(rotation_matrix_z(eAngle.z_degrees),
                               np.dot(rotation_matrix_y(eAngle.y_degrees),
                                      rotation_matrix_x(eAngle.x_degrees)))
-    glMultMatrixf(rotation_matrix)
-    # print("rotation Matrix: ", rotation_matrix)
+
+    
+    glRotatef(eAngle.z_degrees, 0, 0, 1)  # Rotate around z-axis
+    glRotatef(eAngle.y_degrees, 0, 1, 0)  # Rotate around y-axis
+    glRotatef(eAngle.x_degrees, 1, 0, 0)  # Rotate around x-axis
 
 
-    gluCylinder(quadric, 2, 2, 4, 32, 1)
+    gluCylinder(quadric, 2, .5, 8, 32, 1)
     glPopMatrix()
     
     end_point = np.array([0, 0, 4, 1])  # Representing the point in homogeneous coordinates
@@ -206,7 +206,6 @@ def draw_cylinder_small(x, y, z, color, eAngle: EulerAngles):
 
 
 
-
 def draw_claw(x, y, z, color, eAngle: EulerAngles):
     quadric = gluNewQuadric()
     gluQuadricNormals(quadric, GLU_SMOOTH)
@@ -218,13 +217,10 @@ def draw_claw(x, y, z, color, eAngle: EulerAngles):
     glTranslatef(x, y, z)
 
 
-
-
-    rotation_matrix = np.dot(rotation_matrix_z(eAngle.z_degrees),
-                              np.dot(rotation_matrix_y(eAngle.y_degrees),
-                                     rotation_matrix_x(eAngle.x_degrees)))
-    glMultMatrixf(rotation_matrix)
-
+    glRotatef(eAngle.z_degrees, 0, 0, 1)  # Rotate around z-axis
+    glRotatef(eAngle.y_degrees, 0, 1, 0)  # Rotate around y-axis
+    glRotatef(eAngle.x_degrees, 1, 0, 0)  # Rotate around x-axis
+    
 
     gluCylinder(quadric, 1, 0.5, 5, 32, 1)
     glPopMatrix()
@@ -239,91 +235,6 @@ def draw_rectangle():
     glVertex3f(-4, 10, initial_zoom)
     glEnd()
     glPopMatrix()
-    
-# def draw_octagon():
-#     glPushMatrix()
-#     glColor3f(1.0, 0, 0)
-#     glBegin(GL_LINES)
-#     glVertex3f(-4, 0, initial_zoom)
-#     glVertex3f(4, 0, initial_zoom)
-
-#     glVertex3f(4, 0, initial_zoom)
-#     glVertex3f(4, 10, initial_zoom)
-
-#     glVertex3f(4, 10, initial_zoom)
-#     glVertex3f(-4, 10, initial_zoom)
-
-#     glVertex3f(-4, 10, initial_zoom)
-#     glVertex3f(-4, 0, initial_zoom)
-
-#     glVertex3f(-4, 0, initial_zoom)
-#     glVertex3f(-4, 0, initial_zoom + 1)
-
-#     glVertex3f(4, 0, initial_zoom)
-#     glVertex3f(4, 0, initial_zoom + 1)
-
-#     glVertex3f(4, 10, initial_zoom)
-#     glVertex3f(4, 10, initial_zoom + 1)
-
-#     glVertex3f(-4, 10, initial_zoom)
-#     glVertex3f(-4, 10, initial_zoom + 1)
-
-#     glVertex3f(-4, 0, initial_zoom + 1)
-#     glVertex3f(4, 0, initial_zoom + 1)
-
-#     glVertex3f(4, 0, initial_zoom + 1)
-#     glVertex3f(4, 10, initial_zoom + 1)
-
-#     glVertex3f(4, 10, initial_zoom + 1)
-#     glVertex3f(-4, 10, initial_zoom + 1)
-
-#     glVertex3f(-4, 10, initial_zoom + 1)
-#     glVertex3f(-4, 0, initial_zoom + 1)
-#     glEnd()
-#     glPopMatrix()
-
-def draw_octagon():
-    glPushMatrix()
-    glColor3f(1.0, 0, 0)
-    glBegin(GL_QUADS)
-    glVertex3f(-4, 0, initial_zoom)
-    glVertex3f(-2.828, 0, initial_zoom + 2.828)
-
-    glVertex3f(-2.828, 0, initial_zoom + 2.828)
-    glVertex3f(2.828, 0, initial_zoom + 2.828)
-
-    glVertex3f(2.828, 0, initial_zoom + 2.828)
-    glVertex3f(4, 0, initial_zoom)
-
-    glVertex3f(4, 0, initial_zoom)
-    glVertex3f(2.828, 0, initial_zoom - 2.828)
-
-    glVertex3f(2.828, 0, initial_zoom - 2.828)
-    glVertex3f(-2.828, 0, initial_zoom - 2.828)
-
-    glVertex3f(-2.828, 0, initial_zoom - 2.828)
-    glVertex3f(-4, 0, initial_zoom)
-
-    glVertex3f(-4, 0, initial_zoom)
-    glVertex3f(-2.828, 0, initial_zoom + 2.828)
-
-    glVertex3f(-2.828, 0, initial_zoom + 2.828)
-    glVertex3f(2.828, 0, initial_zoom + 2.828)
-
-    glVertex3f(2.828, 0, initial_zoom + 2.828)
-    glVertex3f(4, 0, initial_zoom)
-
-    glVertex3f(4, 0, initial_zoom)
-    glVertex3f(2.828, 0, initial_zoom - 2.828)
-
-    glVertex3f(2.828, 0, initial_zoom - 2.828)
-    glVertex3f(-2.828, 0, initial_zoom - 2.828)
-
-    glVertex3f(-2.828, 0, initial_zoom - 2.828)
-    glVertex3f(-4, 0, initial_zoom)
-    glEnd()
-    glPopMatrix()
-
     
 
 
@@ -351,7 +262,13 @@ class OpenGLWidget(QOpenGLWidget):
         glPushMatrix()
         glRotatef(self.rotation_angle, 0, 0, 1)
         
-        tvecs, rvecs = getPositionData()
+        # tvecs, rvecs, use_secondary_camera= getPositionData()
+        position_data = getPositionData()
+        if len(position_data) == 2:
+            tvecs, rvecs = position_data
+            use_secondary_camera = False  # or whatever default value makes sense in your context
+        elif len(position_data) == 3:
+            tvecs, rvecs, use_secondary_camera = position_data
         # Flag to tell if using x or y axis, x - true, y - false
         p_x_or_y = True
         transformed_points = transformCameraCoordinates(tvecs, p_x_or_y)
@@ -366,7 +283,7 @@ class OpenGLWidget(QOpenGLWidget):
         # print("Third Segment Euler Angle:", thirdSegmentEulerAngle)
         
         armPositions = ArmPositions(armPositionsData)
-        armPositions = armPositions.scale(1, 1, -50)
+        armPositions = armPositions.scale(40, 1, -40)
         armPositions = armPositions.addOffset()
         
         position1: Position = armPositions.position1
@@ -380,17 +297,9 @@ class OpenGLWidget(QOpenGLWidget):
         draw_cylinder(position2.x, position2.y, position2.z, (0, 1.0, 0), secondEulerAngle)
         
         thirdEulerAngle = EulerAngles(*thirdSegmentEulerAngle)
-        x,y,z = draw_cylinder_small(position3.x, position3.y, position3.z, (0, 0, 1.0), thirdEulerAngle)
-        
-        claw1_rotation = EulerAngles(thirdEulerAngle.x_degrees, thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees - 30) #the 45 was on the y
-        claw2_rotation = EulerAngles(thirdEulerAngle.x_degrees, thirdEulerAngle.y_degrees, thirdEulerAngle.z_degrees - 90)
-        
-        draw_claw(-x, y, z, (0, 0, 1.0),claw1_rotation)
-        draw_claw(-x, y, z, (0, 0, 1.0), claw2_rotation)
-
+        x,y,z= draw_cylinder_small(position3.x, position3.y, position3.z, (0, 0, 1.0), thirdEulerAngle)
 
         draw_rectangle()
-        #draw_octagon()
         glPopMatrix()
 
 
