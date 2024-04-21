@@ -8,12 +8,9 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from cam_position.normalization import getPositionData, transformCameraCoordinates
 # from positions need to get values some how.
-
-
-
-
 yaw, pitch = 0, 0
 initial_zoom = -55
+rotateModelY = 90
 
 
 update_armPositionsData =[[ 0.,      0.,        0.        ],
@@ -261,26 +258,23 @@ class OpenGLWidget(QOpenGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glPushMatrix()
         glRotatef(self.rotation_angle, 0, 0, 1)
+        global rotateModelY
+
         
         # tvecs, rvecs, use_secondary_camera= getPositionData()
         position_data = getPositionData()
         if len(position_data) == 2:
             tvecs, rvecs = position_data
             use_secondary_camera = False  # or whatever default value makes sense in your context
+            # print("not getting my values!!!\n")
         elif len(position_data) == 3:
             tvecs, rvecs, use_secondary_camera = position_data
         # Flag to tell if using x or y axis, x - true, y - false
         p_x_or_y = True
         transformed_points = transformCameraCoordinates(tvecs, p_x_or_y)
         
-        #print("POINTS: \n", transformed_points, "\n")
-        #print("ROTATIONS: \n", rvecs, "\n")
-        
         update_positions_and_angles(transformed_points, rvecs)
-        
-        # print("First Segment Euler Angle:", firstSegmentEulerAngle)
-        # print("Second Segment Euler Angle:", secondSegmentEulerAngle)
-        # print("Third Segment Euler Angle:", thirdSegmentEulerAngle)
+
         
         armPositions = ArmPositions(armPositionsData)
         armPositions = armPositions.scale(40, 1, -40)
@@ -301,6 +295,14 @@ class OpenGLWidget(QOpenGLWidget):
 
         draw_rectangle()
         glPopMatrix()
+        if use_secondary_camera:
+            glRotatef(-rotateModelY, 0, 0, 1)
+            if rotateModelY > 0:
+                rotateModelY = rotateModelY - 90
+        else:
+            rotateModelY = 90
+        
+
 
 
     def resizeGL(self, w, h):

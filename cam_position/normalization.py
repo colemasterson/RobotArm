@@ -74,7 +74,7 @@ def getPositionData():
             [0.11283635, 0.02458074, 0.41529165]])
         default_rvecs = np.array([(0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0)])
         
-        return default_tvecs, default_rvecs, use_secondary_camera
+        return default_tvecs, default_rvecs
     
     list_of_tuples = [tuple(lst) for lst in camera_tvecs]
 
@@ -83,7 +83,7 @@ def getPositionData():
 
     # camera_rvecs add the offsets
     
-    return camera_tvecs, camera_rvecs
+    return camera_tvecs, camera_rvecs, use_secondary_camera
 
 def transformCameraCoordinates(camera_position_data, x_or_y):
     
