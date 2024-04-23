@@ -285,7 +285,7 @@ class OpenGLWidget(QOpenGLWidget):
         glRotatef(self.rotation_angle + rotateModelY, 0, 0, 1)
         
         armPositions = ArmPositions(armPositionsData)
-        armPositions = armPositions.scale(40, 1, -40)
+        armPositions = armPositions.scale(40, -20, -40)
         armPositions = armPositions.addOffset()
         
         position1: Position = armPositions.position1
@@ -293,6 +293,7 @@ class OpenGLWidget(QOpenGLWidget):
         position3: Position = armPositions.position3
         
         firstEulerAngle = EulerAngles(*firstSegmentEulerAngle)
+        # firstEulerAngle = EulerAngles(firstEulerAngle.x_degrees, firstEulerAngle.y_degrees, -firstEulerAngle.z_degrees)
         draw_cylinder_medium(position1.x, position1.y, position1.z, (1.0, 0, 0), firstEulerAngle)
         
         secondEulerAngle = EulerAngles(*secondSegmentEulerAngle)

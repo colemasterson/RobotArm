@@ -132,6 +132,7 @@ class PoseEstimator:
             # Rotate the z value of the Euler angles by 180 degrees
             adjusted_euler_angles = list(euler_angles)
             adjusted_euler_angles[1] = (euler_angles[1] + 180) % 360
+            #adjusted_euler_angles[0] = (euler_angles[2] + 180) % 360
             
             # Further adjust if using the secondary camera
             if use_secondary_camera:
@@ -151,7 +152,7 @@ class PoseEstimator:
         use_secondary_camera = False
         print("Updating Position...")
         print(f"Current s6angle: {s6angle}")
-        if s6angle > 60.0 or s6angle < -30:
+        if s6angle > 60.0 or s6angle < -46:
             print("Servo 6 rotated towards camera y, using camera y image path(secondary).")
             use_secondary_camera = True
             photo_path += "secondary/"

@@ -50,8 +50,8 @@ def getPositionData():
                 camera_tvecs.append(marker['tvec'])
                 # Convert rvec to a tuple and append to the camera_rvecs
                 camera_rvecs.append(tuple(marker['euler_angles']))
-        print("Value of 'tvec':", camera_tvecs)
-        print("Value of 'euler_angles':", camera_rvecs)
+        # print("Value of 'tvec':", camera_tvecs)
+        # print("Value of 'euler_angles':", camera_rvecs)
         # if use_secondary_camera:
         #     camera_rvecs = [(vec1[0] + vec2[0], vec1[1] + vec2[1], vec1[2] + vec2[2]) for vec1, vec2 in zip(camera_rvecs, y_camera_654)]
         # else:

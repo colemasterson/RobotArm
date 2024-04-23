@@ -2,10 +2,11 @@ import sys
 import os
 import cv2
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QComboBox, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton
-from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal
+from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal, QTimer
 from arm_control.arm_controller import RobotArmController
 from ui.CameraManager import CameraManager
 import config
+
 
 
 
@@ -21,30 +22,43 @@ class MacroExecutionWorker(QObject):
         self.save_dir = save_dir
         self.primary_camera_index = primary_camera_index
         self.secondary_camera_index = secondary_camera_index
+    def initTimer(self):
+            self.timer = QTimer(self)
+            self.timer.timeout.connect(self.handleTimeout)
+            self.timer.start(2000)  # Start timer for 10 seconds
+
+    def handleTimeout(self):
+        print("Timer expired!")
+        self.timer.stop()
+        self.captureImages()  # Call image capturing after the timer expires
 
     def run(self):
         for name in self.macro_names:
             if name != 'None':
                 self.robot_arm_controller.execute_macro(name)
+        self.initTimer()  # Initialize and start the timer
+
+    def captureImages(self):
         # Capture images from primary camera
         for i in range(10):
             frame = self.camera_manager.get_frame(self.primary_camera_index)
-            if frame is not None: 
+            if frame is not None:
                 img_path = os.path.join(self.save_dir, "primary", f"x_image_{i + 1}.jpg")
                 cv2.imwrite(img_path, frame)
                 print(f"Saved {img_path}")
             else:
                 print(f"Failed to capture image {i + 1}")
+
         # Capture additional images from secondary camera (Camera 4)
         for i in range(10):
             frame = self.camera_manager.get_frame(self.secondary_camera_index)
             if frame is not None:
-                # All images from secondary camera are labeled 'y'
                 img_path = os.path.join(self.save_dir, "secondary", f"y_image_{i + 1}.jpg")
                 cv2.imwrite(img_path, frame)
                 print(f"Saved {img_path} from secondary camera")
             else:
                 print(f"Failed to capture image {i + 1} from secondary camera")
+        
         # call the pose estimation
         self.pose_estimator.updatePos(self.robot_arm_controller.arm.getPosition(6, True))
         self.finished.emit()
